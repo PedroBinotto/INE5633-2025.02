@@ -1,0 +1,21 @@
+[project]
+name = "py-8pzzl"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Pedro Binotto",email = "pedrosantibinotto@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[project.scripts]
+py_8pzzl = 'py_8pzzl.main:run'
+
+[tool.poetry]
+packages = [{include = "py_8pzzl", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
