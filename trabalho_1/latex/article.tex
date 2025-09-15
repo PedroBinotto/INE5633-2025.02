@@ -1,0 +1,96 @@
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[a4paper, left=3cm, right=2cm, top=3cm, bottom=2cm]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[toc]{glossaries}
+\usepackage{authblk}
+\usepackage{cite}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{relsize}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{verbatimbox}
+\usepackage[english, portuguese]{babel}
+    \addto\captionsportuguese{\renewcommand*\bibname{Referências}}
+    \addto\captionsportuguese{\renewcommand*\contentsname{Sumário}}
+
+\newcommand\myshade{85}
+\newcommand{\pprime}{\ensuremath{^{\prime}}}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\renewcommand\Authsep{, }
+\renewcommand\Authand{, }
+\renewcommand\Authands{, e }
+\providecommand{\keywords}[1]{%
+  \small
+  \textbf{\textit{\iflanguage{english}{Keywords}{Palavras-chave} ---}} #1%
+}
+
+\hypersetup{
+    pdftitle   = {Título de Artigo, Subtítulo de Artigo},
+    pdfauthor  = {Pedro Santi Binotto},
+    pdfsubject = {Resumo em Português},
+    linkcolor  = black,
+    citecolor  = black,
+    urlcolor   = black,
+    colorlinks = true,
+    filecolor  = black,
+    linktoc    = page
+}%
+
+% \newglossaryentry{gls} {
+%   name={GLS},
+%   description={Glossary entry}
+% }
+
+\title{Atividade Prática \RNum{1} \\ [0.2em]\smaller{}Trabalho sobre Métodos de busca}
+
+\author[1]{Pedro Santi Binotto [20200634]\thanks{\texttt{pedro.binotto@grad.ufsc.br}}}
+\author[2]{Cauã Pablo Padilha [22100895]\thanks{\texttt{padilha.caua@grad.ufsc.br}}}
+\author[3]{Felipe Jun Hatsumura [19206699]\thanks{\texttt{fjhats@gmail.com}}}
+\author[4]{Gabriel Lemos da Silva [18200628]\thanks{\texttt{glemoss.dev@gmail.com}}}
+\date{\today}
+\affil[1]{Departamento de Informática e Estatística, Universidade Federal de Santa Catarina}
+
+\makeglossaries
+
+\begin{document}
+\begin{titlepage}
+\selectlanguage{portuguese} 
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+    Resumo em Português
+\end{abstract}
+
+\selectlanguage{english} 
+\begin{abstract}
+    Abstract in English
+\end{abstract}
+
+\selectlanguage{portuguese} 
+
+\keywords{bla,bla, bla}
+
+\end{titlepage}
+
+\tableofcontents
+
+\printglossary[title=Glossário, toctitle=Glossário]
+
+\section{Nome de secção}
+\subsection{Subsecção}
+\paragraph{}
+
+Conteúdo de parágrafo
+
+\newpage
+\section{Bibliografia}
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}
+
