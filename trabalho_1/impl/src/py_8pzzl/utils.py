@@ -1,16 +1,11 @@
 from pprint import pprint
-from typing import Any, Callable, List, overload
+from typing import Any, Callable, List
 from collections import deque
 from math import sqrt
 import time
-import random
 import sys
 
-from py_8pzzl.types import Constraints, Params, Table
-
-
-def get_random_table(size: int = 3) -> Table:
-    return [[random.randint(0, 3) for __ in range(size)] for _ in range(size)]
+from py_8pzzl.types import Constraints, Params
 
 
 def print_table(table: List[int], width: int = 5) -> None:
@@ -31,7 +26,7 @@ def live_update(f: Callable[[], Any], interval: float = 0.5) -> None:
 
 def validate_input(input: Params) -> Constraints:
     pprint(input)
-    sorted_input = input[1].copy()
+    sorted_input = list(input[1])
     sorted_input.sort()
 
     actual_data = tuple(sorted_input)
@@ -55,4 +50,4 @@ def capture_input() -> Constraints:
     for i in range(len):
         table[i] = next(it)
 
-    return validate_input((n, table))
+    return validate_input((n, tuple(table)))

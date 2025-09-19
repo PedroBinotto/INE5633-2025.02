@@ -1,4 +1,5 @@
-from py_8pzzl.utils import capture_input, live_update, print_table
+from py_8pzzl.types import Graph
+from py_8pzzl.utils import capture_input
 
 
 def a_star():
@@ -7,5 +8,7 @@ def a_star():
 
 def run() -> None:
     params = capture_input()
-    while True:
-        live_update(lambda: print_table(params[0][1]))
+    s = params[0][1]
+    g = Graph(s)
+    g.add_edge(s, (1, 2, 3, 4))
+    return

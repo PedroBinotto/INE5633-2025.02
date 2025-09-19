@@ -1,18 +1,29 @@
-from typing import List, Tuple
+from collections import defaultdict
+from typing import DefaultDict, List, Tuple
+from pprint import pprint
 
-type Table = List[List[int]]
+type State = Tuple[int, ...]
 
-type Params = Tuple[int, List[int]]
+type Params = Tuple[int, State]
 """ _N_(size), Initial state """
 
-type Constraints = Tuple[Params, Tuple[int]]
+type Constraints = Tuple[Params, State]
 """ Params, Solution """
+
+type Adj = DefaultDict[State, List[State]]
+""" Adjacency Matrix """
 
 
 class Graph:
-    """
-    Baseado em Sedgewick, Wayne; Algorithms, 4th Edition, Graph.java:
-    https://algs4.cs.princeton.edu/41graph/Graph.java.html
-    """
+    def __init__(self, s: State) -> None:
+        self.__adj: DefaultDict[State, List[State]] = defaultdict()
+        self.__adj[s] = []
 
-    pass
+    def add_edge(self, v: State, w: State) -> None:
+        if w in self.__adj:
+            raise KeyError("TODO: message")
+
+        self.__adj[w] = []
+        self.__adj[v] += w
+
+        pprint(self.__adj)
