@@ -1,6 +1,5 @@
 from collections import defaultdict
 from typing import DefaultDict, List, Tuple
-from pprint import pprint
 
 type State = Tuple[int, ...]
 
@@ -24,6 +23,10 @@ class Graph:
             raise KeyError("TODO: message")
 
         self.__adj[w] = []
-        self.__adj[v] += w
+        self.__adj[v].append(w)
 
-        pprint(self.__adj)
+    def v(self) -> List[State]:
+        return list(self.__adj.keys())
+
+    def adj(self, v: State) -> List[State]:
+        return self.__adj[v]

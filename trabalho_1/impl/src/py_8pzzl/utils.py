@@ -25,7 +25,6 @@ def live_update(f: Callable[[], Any], interval: float = 0.5) -> None:
 
 
 def validate_input(input: Params) -> Constraints:
-    pprint(input)
     sorted_input = list(input[1])
     sorted_input.sort()
 
