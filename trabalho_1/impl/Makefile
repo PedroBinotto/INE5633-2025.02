@@ -1,6 +1,6 @@
 .PHONY: run
 
-ASSETS_DIR := assets
+ASSETS_DIR := resources
 TEST_FILES := $(wildcard $(ASSETS_DIR)/*.txt)
 
 run:

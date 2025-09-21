@@ -1,11 +1,10 @@
-from typing import List
+import heapq
+from typing import Callable
+from py_8pzzl.types import DOWN, LEFT, RIGHT, UP, Graph, State
 
-from py_8pzzl.types import UP, DOWN, LEFT, RIGHT, Graph, State
-from py_8pzzl.utils import print_table
 
-
-def compute_moves(s: State, k: int) -> List[State]:
-    moves = []
+def compute_moves(s: State, k: int) -> list[State]:
+    moves: list[State] = []
     z = s.index(0)
     delta = {
         UP: -k,
@@ -39,13 +38,44 @@ def compute_moves(s: State, k: int) -> List[State]:
     return moves
 
 
-def dfs(g: Graph, n: int, s: State, t: State) -> State:
-    if s == t:
-        return s
-    for ss in compute_moves(s, n):
-        g.add_edge(s, ss)
-        return dfs(g, n, ss, t)
+def a_star(
+    g: Graph, n: int, s: State, t: State, h: Callable[[State, State], int]
+) -> list[State] | None:
+    """
+    :param g: Targeted graph
+    :type g: Graph
 
+    :param n: Board size
+    :type n: int
 
-def a_star():
-    pass
+    :param s: Initial state
+    :type s: State
+
+    :param t: Targeted state
+    :type t: State
+
+    :param h: Heuristic function
+    :type h: Callable[[State, State], int]
+
+    :return: Path
+    :rtype: list[State] | None
+    """
+    visited: set[State] = set()
+    open_set = [(h(s, t), 0, s, [s])]
+
+    while open_set:
+        _, g_score, current, path = heapq.heappop(open_set)
+
+        if current == t:
+            return path
+
+        if current in visited:
+            continue
+        visited.add(current)
+
+        for neighbor in compute_moves(current, n):
+            g.add_edge(current, neighbor)
+            if neighbor not in visited:
+                new_g = g_score + 1
+                new_f = new_g + h(neighbor, t)
+                heapq.heappush(open_set, (new_f, new_g, neighbor, path + [neighbor]))
