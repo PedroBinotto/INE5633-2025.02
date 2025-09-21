@@ -61,10 +61,10 @@ def a_star(
     :rtype: list[State] | None
     """
     visited: set[State] = set()
-    open_set = [(h(s, t), 0, s, [s])]
+    open = [(h(s, t), 0, s, [s])]
 
-    while open_set:
-        _, g_score, current, path = heapq.heappop(open_set)
+    while open:
+        _, g_score, current, path = heapq.heappop(open)
 
         if current == t:
             return path
@@ -78,4 +78,4 @@ def a_star(
             if neighbor not in visited:
                 new_g = g_score + 1
                 new_f = new_g + h(neighbor, t)
-                heapq.heappush(open_set, (new_f, new_g, neighbor, path + [neighbor]))
+                heapq.heappush(open, (new_f, new_g, neighbor, path + [neighbor]))
