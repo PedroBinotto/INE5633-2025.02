@@ -1,22 +1,27 @@
 import heapq
-from typing import Callable
-from py_8pzzl.types import DOWN, LEFT, RIGHT, UP, Graph, Path, State
+from py_8pzzl.types import (
+    DELTA_MAP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Direction,
+    Graph,
+    Heuristic,
+    Path,
+    State,
+)
 
 
 def compute_moves(s: State, k: int) -> list[State]:
     moves: list[State] = []
     z = s.index(0)
-    delta = {
-        UP: -k,
-        DOWN: k,
-        LEFT: -1,
-        RIGHT: 1,
-    }
     n = int(k**2)
-    u = z + delta[UP]
-    d = z + delta[DOWN]
-    l = z + delta[LEFT]
-    r = z + delta[RIGHT]
+
+    u = DELTA_MAP[Direction.UP](z, k)
+    d = DELTA_MAP[Direction.DOWN](z, k)
+    l = DELTA_MAP[Direction.LEFT](z, k)
+    r = DELTA_MAP[Direction.RIGHT](z, k)
 
     if z >= k:
         result = list(s)
@@ -38,9 +43,7 @@ def compute_moves(s: State, k: int) -> list[State]:
     return moves
 
 
-def a_star(
-    g: Graph, n: int, s: State, t: State, h: Callable[[State, State], int]
-) -> Path:
+def a_star(g: Graph, n: int, s: State, t: State, h: Heuristic) -> Path:
     """
     :param g: Targeted graph
     :type g: Graph
@@ -55,7 +58,7 @@ def a_star(
     :type t: State
 
     :param h: Heuristic function
-    :type h: Callable[[State, State], int]
+    :type h: Heuristic
 
     :return: Path
     :rtype: Path

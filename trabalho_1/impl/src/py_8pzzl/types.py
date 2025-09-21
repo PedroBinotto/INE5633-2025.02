@@ -1,9 +1,6 @@
 from collections import defaultdict
-
-UP = "UP"
-DOWN = "DOWN"
-RIGHT = "RIGHT"
-LEFT = "LEFT"
+from enum import Enum, auto
+from typing import Callable
 
 type State = tuple[int, ...]
 
@@ -17,6 +14,37 @@ type Adj = defaultdict[State, list[State]]
 """ Adjacency Matrix """
 
 type Path = list[State] | None
+
+type Heuristic = Callable[[State, State], int]
+
+
+class Direction(Enum):
+    UP = auto()
+    DOWN = auto()
+    RIGHT = auto()
+    LEFT = auto()
+
+
+class HFunctionLevel(Enum):
+    L0 = auto()
+    L1 = auto()
+    L2 = auto()
+    L3 = auto()
+
+
+DELTA_MAP: dict[Direction, Callable[[int, int], int]] = {
+    Direction.UP: (lambda z, k: z + (-k)),
+    Direction.DOWN: (lambda z, k: z + k),
+    Direction.LEFT: (lambda z, k: z - 1),
+    Direction.RIGHT: (lambda z, k: z + 1),
+}
+
+HFUNCTION_MAP: dict[HFunctionLevel, Heuristic] = {
+    HFunctionLevel.L0: (lambda x, y: 0),
+    HFunctionLevel.L1: (lambda x, y: 0),  # TODO
+    HFunctionLevel.L2: (lambda x, y: 0),  # TODO
+    HFunctionLevel.L3: (lambda x, y: 0),  # TODO
+}
 
 
 class Graph:

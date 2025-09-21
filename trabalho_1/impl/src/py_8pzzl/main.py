@@ -1,7 +1,7 @@
 import math
 from py_8pzzl.algorithm import a_star
 from py_8pzzl.types import Graph
-from py_8pzzl.utils import capture_input, print_result, print_table
+from py_8pzzl.utils import capture_input, print_result
 
 
 def run() -> None:

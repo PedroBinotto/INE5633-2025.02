@@ -56,7 +56,7 @@ def capture_input() -> Constraints:
     it = iter(data)
     n = next(it)
     len = n * n
-    table: list[int | None] = [None] * len
+    table: list[int] = [-1] * len
     for i in range(len):
         table[i] = next(it)
 
