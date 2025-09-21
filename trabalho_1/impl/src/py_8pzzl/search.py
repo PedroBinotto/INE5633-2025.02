@@ -9,8 +9,8 @@ def a_star_search(
     goal: State,
     heuristic: Callable[[State, State], int],
     hasher: Optional[ZobristHasher] = None,
-    max_nodes: int = 200_000,   # limite de segurança
-    log_interval: int = 5000    # log a cada X expansões
+    max_nodes: int = 500_000,   # limite de nós
+    log_interval: int = 5000    
 ) -> Tuple[Optional[List[State]], Dict[str, int]]:
     """
     Algoritmo A* genérico com monitoramento.
@@ -18,14 +18,13 @@ def a_star_search(
     Retorna (caminho, estatísticas).
     """
 
-    frontier: List[Tuple[int, int, State]] = []  # (f, g, state)
+    frontier: List[Tuple[int, int, State]] = [] 
     heapq.heappush(frontier, (heuristic(start, goal), 0, start))
 
-    # usa hash se tiver hasher
     start_key = hasher.hash_state(start) if hasher else start
     goal_key = hasher.hash_state(goal) if hasher else goal
 
-    # came_from guarda: hash -> (estado, hash do pai)
+
     came_from: Dict[int, Tuple[State, Optional[int]]] = {start_key: (start, None)}
     g_score: Dict[int, int] = {start_key: 0}
 
@@ -37,26 +36,26 @@ def a_star_search(
         expanded += 1
         max_frontier = max(max_frontier, len(frontier))
 
-        # gera hash do estado atual
+   
         current_key = hasher.hash_state(current) if hasher else current
 
-        # logs periódicos para monitorar
+     
         if expanded % log_interval == 0:
             print(f"[LOG] expandidos={expanded}, fronteira={len(frontier)}")
 
-        # se atingir o limite, aborta
+
         if expanded >= max_nodes:
             print(f"[ABORTADO] limite de {max_nodes} nós atingido.")
             return None, {"expanded": expanded, "max_frontier": max_frontier}
 
-        # checagem de objetivo
+      
         if current_key == goal_key:
             return reconstruct_path(came_from, current_key), {
                 "expanded": expanded,
                 "max_frontier": max_frontier,
             }
 
-        # gerar sucessores
+  
         n = int(len(current) ** 0.5)
         zero_idx = current.index(0)
         x, y = divmod(zero_idx, n)

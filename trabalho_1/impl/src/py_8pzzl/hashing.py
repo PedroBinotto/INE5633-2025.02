@@ -19,7 +19,7 @@ class ZobristHasher:
         self.size = n * n
         random.seed(seed)
 
-        # tabela[posição][valor] = número aleatório de 64 bits
+       
         self.table: List[List[int]] = [
             [random.getrandbits(64) for _ in range(self.size)]
             for _ in range(self.size)
@@ -40,10 +40,9 @@ class ZobristHasher:
         Isso evita recalcular o hash inteiro do estado.
         """
         h = old_hash
-        # remove valores antigos
+        
         h ^= self.table[pos1][val1]
         h ^= self.table[pos2][val2]
-        # adiciona valores novos
         h ^= self.table[pos1][val2]
         h ^= self.table[pos2][val1]
         return h

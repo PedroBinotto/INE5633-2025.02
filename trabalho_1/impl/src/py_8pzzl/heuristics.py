@@ -35,7 +35,7 @@ def linear_conflict(state: State, goal: State) -> int:
     n = int(math.sqrt(len(state)))
     h = manhattan(state, goal)
 
-    # Conflitos em linhas
+
     for row in range(n):
         row_vals = state[row * n:(row + 1) * n]
         for i in range(n):
@@ -48,7 +48,7 @@ def linear_conflict(state: State, goal: State) -> int:
                 if goal_row_i == row and goal_row_j == row and goal_col_i > goal_col_j:
                     h += 2
 
-    # Conflitos em colunas
+    
     for col in range(n):
         col_vals = [state[row * n + col] for row in range(n)]
         for i in range(n):

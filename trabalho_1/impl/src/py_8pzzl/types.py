@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import DefaultDict, List, Tuple, TypeAlias
 
-# Definições de tipos
-State: TypeAlias = Tuple[int, ...]             # Representa um estado (tupla de números)
-Params: TypeAlias = Tuple[int, State]          # (N, estado_inicial)
-Constraints: TypeAlias = Tuple[Params, State]  # (params, estado_objetivo)
-Adj: TypeAlias = DefaultDict[State, List[State]]  # Matriz de adjacência
+
+State: TypeAlias = Tuple[int, ...]            
+Params: TypeAlias = Tuple[int, State]         
+Constraints: TypeAlias = Tuple[Params, State] 
+Adj: TypeAlias = DefaultDict[State, List[State]]  
 
 
 class Graph:

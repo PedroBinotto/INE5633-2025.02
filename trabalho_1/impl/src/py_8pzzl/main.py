@@ -2,12 +2,16 @@ import time
 from py_8pzzl.utils import capture_input, print_table
 from py_8pzzl import heuristics as H
 from py_8pzzl.search import a_star_search
+from py_8pzzl.hashing import ZobristHasher
 
 
 def run() -> None:
-    # Lê input: n (tamanho) seguido do estado inicial
     params, goal = capture_input()
     n, start = params
+
+    hasher = ZobristHasher(n)
+    start_hash = hasher.hash_state(start)
+    goal_hash = hasher.hash_state(goal)
 
     heuristics = {
         "uniforme": H.uniform_cost,
@@ -29,7 +33,8 @@ def run() -> None:
         print(f"Rodando A* com heurística: {nome}")
 
         inicio = time.time()
-        path, stats = a_star_search(start, goal, heur)
+        # agora passamos também o hasher
+        path, stats = a_star_search(start, goal, heur, hasher)
         fim = time.time()
 
         if path is None:

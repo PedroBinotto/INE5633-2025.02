@@ -37,12 +37,12 @@ def validate_input(input: Params) -> Constraints:
     solution = deque(expected_data)
     solution.rotate(-1)
 
-    # 🔧 converter para tuple
+   
     return (input, tuple(solution))
 
 
 def capture_input() -> Constraints:
-    data = list(map(int, sys.stdin.read().split()))  # <- força int
+    data = list(map(int, sys.stdin.read().split())) 
     it = iter(data)
     n = next(it)
     length = n * n
