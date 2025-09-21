@@ -1,6 +1,11 @@
 from collections import defaultdict
 from typing import DefaultDict, List, Tuple
 
+UP = "UP"
+DOWN = "DOWN"
+RIGHT = "RIGHT"
+LEFT = "LEFT"
+
 type State = Tuple[int, ...]
 
 type Params = Tuple[int, State]
@@ -20,7 +25,7 @@ class Graph:
 
     def add_edge(self, v: State, w: State) -> None:
         if w in self.__adj:
-            raise KeyError("TODO: message")
+            return
 
         self.__adj[w] = []
         self.__adj[v].append(w)

@@ -13,6 +13,7 @@ def print_table(table: List[int], width: int = 5) -> None:
     it = iter(table)
     matrix = [list(row) for row in zip(*[it] * cols)]
 
+    print("\n\n")
     for row in matrix:
         print(" ".join(f"{val:>{width}}" for val in row))
 
@@ -37,7 +38,7 @@ def validate_input(input: Params) -> Constraints:
     solution = deque(expected_data)
     solution.rotate(-1)
 
-    return (input, solution)
+    return (input, tuple(solution))
 
 
 def capture_input() -> Constraints:
