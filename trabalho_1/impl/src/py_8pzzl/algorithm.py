@@ -1,6 +1,6 @@
 import heapq
 from typing import Callable
-from py_8pzzl.types import DOWN, LEFT, RIGHT, UP, Graph, State
+from py_8pzzl.types import DOWN, LEFT, RIGHT, UP, Graph, Path, State
 
 
 def compute_moves(s: State, k: int) -> list[State]:
@@ -40,7 +40,7 @@ def compute_moves(s: State, k: int) -> list[State]:
 
 def a_star(
     g: Graph, n: int, s: State, t: State, h: Callable[[State, State], int]
-) -> list[State] | None:
+) -> Path:
     """
     :param g: Targeted graph
     :type g: Graph
@@ -58,7 +58,7 @@ def a_star(
     :type h: Callable[[State, State], int]
 
     :return: Path
-    :rtype: list[State] | None
+    :rtype: Path
     """
     visited: set[State] = set()
     open = [(h(s, t), 0, s, [s])]
@@ -76,6 +76,6 @@ def a_star(
         for neighbor in compute_moves(current, n):
             g.add_edge(current, neighbor)
             if neighbor not in visited:
-                new_g = g_score + 1
-                new_f = new_g + h(neighbor, t)
-                heapq.heappush(open, (new_f, new_g, neighbor, path + [neighbor]))
+                g_next = g_score + 1
+                f_next = g_next + h(neighbor, t)
+                heapq.heappush(open, (f_next, g_next, neighbor, path + [neighbor]))

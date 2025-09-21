@@ -4,7 +4,7 @@ from math import sqrt
 import time
 import sys
 
-from py_8pzzl.types import Constraints, Params, State
+from py_8pzzl.types import Constraints, Params, Path, State
 
 
 def print_table(table: State, width: int = 5) -> None:
@@ -38,6 +38,17 @@ def validate_input(input: Params) -> Constraints:
     solution.rotate(-1)
 
     return (input, tuple(solution))
+
+
+def print_result(path: Path) -> None:
+    if path is not None:
+        print("Path:\n")
+        for idx, state in enumerate(path):
+            print(f"{idx}:")
+            print_table(state)
+            print("\n***\n")
+    else:
+        print("Não há solução possível")
 
 
 def capture_input() -> Constraints:

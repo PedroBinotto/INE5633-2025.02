@@ -16,6 +16,8 @@ type Constraints = tuple[Params, State]
 type Adj = defaultdict[State, list[State]]
 """ Adjacency Matrix """
 
+type Path = list[State] | None
+
 
 class Graph:
     def __init__(self, s: State) -> None:
