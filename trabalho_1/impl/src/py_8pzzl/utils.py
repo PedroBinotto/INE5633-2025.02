@@ -5,6 +5,7 @@ from math import sqrt
 import time
 import sys
 
+from py_8pzzl.algorithm import HFUNCTION_MAP
 from py_8pzzl.types import Constraints, HFunctionLevel, Params, Path, State
 
 
@@ -60,6 +61,6 @@ def capture_input() -> Constraints:
     table: list[int] = [-1] * len
     for i in range(len):
         table[i] = int(next(it))
-    level = HFunctionLevel[next(it)]
+    level = HFUNCTION_MAP[HFunctionLevel[next(it)]]
 
     return validate_input((n, tuple(table), level))

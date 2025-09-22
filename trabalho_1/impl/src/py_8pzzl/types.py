@@ -5,8 +5,8 @@ from typing import Callable
 type State = tuple[int, ...]
 """ Tuple of size N ** 2, wherein N is the board size (edge) """
 
-type Params = tuple[int, State, HFunctionLevel]
-""" N (size), Initial state """
+type Params = tuple[int, State, HeuristicFunction]
+""" N (size), Initial state, Heuristic function """
 
 type Constraints = tuple[Params, State]
 """ Params, Solution """
