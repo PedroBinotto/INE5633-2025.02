@@ -3,9 +3,10 @@ from enum import Enum, auto
 from typing import Callable
 
 type State = tuple[int, ...]
+""" Tuple of size N ** 2, wherein N is the board size (edge) """
 
-type Params = tuple[int, State]
-""" _N_(size), Initial state """
+type Params = tuple[int, State, HFunctionLevel]
+""" N (size), Initial state """
 
 type Constraints = tuple[Params, State]
 """ Params, Solution """
@@ -15,7 +16,7 @@ type Adj = defaultdict[State, list[State]]
 
 type Path = list[State] | None
 
-type Heuristic = Callable[[State, State], int]
+type HeuristicFunction = Callable[[State, State], int]
 
 
 class Direction(Enum):
@@ -26,25 +27,10 @@ class Direction(Enum):
 
 
 class HFunctionLevel(Enum):
-    L0 = auto()
-    L1 = auto()
-    L2 = auto()
-    L3 = auto()
-
-
-DELTA_MAP: dict[Direction, Callable[[int, int], int]] = {
-    Direction.UP: (lambda z, k: z + (-k)),
-    Direction.DOWN: (lambda z, k: z + k),
-    Direction.LEFT: (lambda z, k: z - 1),
-    Direction.RIGHT: (lambda z, k: z + 1),
-}
-
-HFUNCTION_MAP: dict[HFunctionLevel, Heuristic] = {
-    HFunctionLevel.L0: (lambda x, y: 0),
-    HFunctionLevel.L1: (lambda x, y: 0),  # TODO
-    HFunctionLevel.L2: (lambda x, y: 0),  # TODO
-    HFunctionLevel.L3: (lambda x, y: 0),  # TODO
-}
+    L0 = "L0"
+    L1 = "L1"
+    L2 = "L2"
+    L3 = "L3"
 
 
 class Graph:

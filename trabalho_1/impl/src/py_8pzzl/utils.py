@@ -1,10 +1,11 @@
+from pprint import pprint
 from typing import Any, Callable
 from collections import deque
 from math import sqrt
 import time
 import sys
 
-from py_8pzzl.types import Constraints, Params, Path, State
+from py_8pzzl.types import Constraints, HFunctionLevel, Params, Path, State
 
 
 def print_table(table: State, width: int = 5) -> None:
@@ -52,12 +53,13 @@ def print_result(path: Path) -> None:
 
 
 def capture_input() -> Constraints:
-    data = list(map(int, sys.stdin.read().split()))
+    data = list(map(str, sys.stdin.read().split()))
     it = iter(data)
-    n = next(it)
+    n = int(next(it))
     len = n * n
     table: list[int] = [-1] * len
     for i in range(len):
-        table[i] = next(it)
+        table[i] = int(next(it))
+    level = HFunctionLevel[next(it)]
 
-    return validate_input((n, tuple(table)))
+    return validate_input((n, tuple(table), level))

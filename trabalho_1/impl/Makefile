@@ -3,7 +3,12 @@
 ASSETS_DIR := resources
 TEST_FILES := $(wildcard $(ASSETS_DIR)/*.txt)
 
-run:
+all: run
+
+install:
+	poetry install
+
+run: install
 ifdef TEST
 	cat $(ASSETS_DIR)/$(TEST) | poetry run py_8pzzl
 else

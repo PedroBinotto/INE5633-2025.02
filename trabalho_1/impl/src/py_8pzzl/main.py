@@ -1,14 +1,16 @@
-import math
-from py_8pzzl.algorithm import a_star
+from pprint import pprint
+from py_8pzzl.algorithm import HFUNCTION_MAP, a_star
 from py_8pzzl.types import Graph
 from py_8pzzl.utils import capture_input, print_result
 
 
 def run() -> None:
-    params = capture_input()
-    s = params[0][1]
-    t = params[1]
+    constraints = capture_input()
+    params = constraints[0]
+    n = params[0]
+    s = params[1]
+    l = params[2]
+    t = constraints[1]
     g = Graph(s)
-    n = int(math.sqrt(len(s)))
 
-    print_result(a_star(g, n, s, t, lambda x, y: 0))
+    print_result(a_star(g, n, s, t, HFUNCTION_MAP[l]))
