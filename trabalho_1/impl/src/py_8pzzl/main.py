@@ -14,3 +14,6 @@ def run() -> None:
     g = Graph(s)
 
     print_result(a_star(g, n, s, t, HFUNCTION_MAP[l]))
+
+if __name__ == "__main__":
+    run()

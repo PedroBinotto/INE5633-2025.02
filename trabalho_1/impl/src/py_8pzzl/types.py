@@ -2,22 +2,12 @@ from collections import defaultdict
 from enum import Enum, auto
 from typing import Callable
 
-type State = tuple[int, ...]
-""" Tuple of size N ** 2, wherein N is the board size (edge) """
-
-type Params = tuple[int, State, HFunctionLevel]
-""" N (size), Initial state """
-
-type Constraints = tuple[Params, State]
-""" Params, Solution """
-
-type Adj = defaultdict[State, list[State]]
-""" Adjacency Matrix """
-
-type Path = list[State] | None
-
-type HeuristicFunction = Callable[[State, State], int]
-
+State = tuple[int, ...]
+Params = tuple[int, State, "HFunctionLevel"]
+Constraints = tuple[Params, State]
+Adj = dict[State, list[State]]
+Path = list[State] | None
+HeuristicFunction = Callable[[State, State], int]
 
 class Direction(Enum):
     UP = auto()

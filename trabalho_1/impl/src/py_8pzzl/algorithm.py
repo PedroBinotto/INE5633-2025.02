@@ -93,18 +93,56 @@ def null_heuristic(_x: State, _y: State) -> int:
 
 
 def non_admissible_heuristic(x: State, y: State) -> int:
-    # TODO
-    return 0
+    n = int(len(x) ** 0.5)
+    total = 0
+    for i, v in enumerate(x):
+        if v == 0:
+            continue
+        j = y.index(v)
+        xi, yi = divmod(i, n)
+        xj, yj = divmod(j, n)
+        total += abs(xi - xj) + abs(yi - yj)
+    return 2 * total
 
 
 def manhattan_heuristic(x: State, y: State) -> int:
-    # TODO
-    return 0
+    n = int(len(x) ** 0.5)
+    total = 0
+    for i, v in enumerate(x):
+        if v == 0:
+            continue
+        j = y.index(v)
+        xi, yi = divmod(i, n)
+        xj, yj = divmod(j, n)
+        total += abs(xi - xj) + abs(yi - yj)
+    return total
 
 
 def custom_heuristic(x: State, y: State) -> int:
-    # TODO
-    return 0
+    n = int(len(x) ** 0.5)
+    base = manhattan_heuristic(x, y)
+    extra = 0
+    for r in range(n):
+        row = x[r*n:(r+1)*n]
+        for i in range(n):
+            for j in range(i+1, n):
+                a, b = row[i], row[j]
+                if a == 0 or b == 0:
+                    continue
+                ga, gb = y.index(a)//n, y.index(b)//n
+                if ga == gb == r and y.index(a) > y.index(b):
+                    extra += 2
+    for c in range(n):
+        col = [x[r*n+c] for r in range(n)]
+        for i in range(n):
+            for j in range(i+1, n):
+                a, b = col[i], col[j]
+                if a == 0 or b == 0:
+                    continue
+                ga, gb = y.index(a)%n, y.index(b)%n
+                if ga == gb == c and y.index(a) > y.index(b):
+                    extra += 2
+    return base + extra
 
 
 HFUNCTION_MAP: dict[HFunctionLevel, HeuristicFunction] = {
