@@ -1,12 +1,53 @@
-from pprint import pprint
+from datetime import datetime
+from importlib import resources
+import json
+from pathlib import Path
 from typing import Any, Callable
 from collections import deque
 from math import sqrt
 import time
 import sys
 
-from py_8pzzl.algorithm import HFUNCTION_MAP
-from py_8pzzl.types import Constraints, HFunctionLevel, Params, Path, Result, State
+from py_8pzzl.types import (
+    NAME,
+    OUT_DIR,
+    OUT_EXT,
+    Constraints,
+    HFunctionLevel,
+    OutputModel,
+    Params,
+    Result,
+    SetEncoder,
+    State,
+)
+
+
+def get_project_root() -> Path:
+    root = resources.files(NAME)
+    if isinstance(root, Path):
+        return root
+    raise SystemError("Erro ao acessar sisema de arquivos")
+
+
+def get_output_dir() -> Path:
+    return get_project_root().parent.parent / OUT_DIR
+
+
+def get_output_file_name(s: State, l: HFunctionLevel) -> str:
+    s_str = "".join(map(str, s))
+    return f"{get_unix_timestamp()}_{s_str}_{l.name}.{OUT_EXT}"
+
+
+def get_output_file(s: State, l: HFunctionLevel) -> Path:
+    return get_output_dir() / get_output_file_name(s, l)
+
+
+def get_unix_time() -> float:
+    return datetime.now().timestamp()
+
+
+def get_unix_timestamp() -> str:
+    return str(int(get_unix_time()))
 
 
 def print_table(table: State, width: int = 5) -> None:
@@ -42,26 +83,67 @@ def validate_input(input: Params) -> Constraints:
     return (input, tuple(solution))
 
 
-def print_result(result: Result | None) -> None:
+def write_output(data: OutputModel, output_file: Path) -> None:
+    with open(output_file, "w") as f:
+        json.dump(data, f, cls=SetEncoder)
+
+
+def export_results(
+    start_time: int,
+    end_time: int,
+    elapsed_time: int,
+    h_level: HFunctionLevel,
+    size: int,
+    result: Result | None,
+    output_file: Path,
+) -> None:
+    output_file.parent.mkdir(exist_ok=True, parents=True)
+    output: OutputModel = {
+        "start_time": start_time,
+        "end_time": end_time,
+        "elapsed_time": elapsed_time,
+        "h_level": h_level,
+        "size": size,
+        "nodes_open": 0,
+        "nodes_open_upper_bound": 0,
+        "nodes_visited": 0,
+        "path_size": 0,
+        "path": None,
+    }
+
     if result is not None:
-        # TODO: Exportar resultados requisitados em arquivo json
+        nodes_open = len(result["open"])
+        nodes_open_upper_bound = result["open_upper_bound"]
+        nodes_visited = len(result["visited"])
+        path = result["path"]
+        path_size = len(path)
+
         print("\nResultados:\n")
-        print(f"Tamanho do caminho: {len(result['path'])}")
-        print(f"Número de nós visitados: {len(result['visited'])}")
-        print(f"Tamanho da fronteira (número de nós abertos): {len(result['open'])}")
-        print(f"Tamanho máximo observado na fronteira: {result['open_upper_bound']}")
+        print(f"Tamanho do caminho: {path_size}")
+        print(f"Número de nós visitados: {nodes_visited}")
+        print(f"Tamanho da fronteira (número de nós abertos): {nodes_open}")
+        print(f"Tamanho máximo observado na fronteira: {nodes_open_upper_bound}")
+
+        output["nodes_open"] = nodes_open
+        output["nodes_open_upper_bound"] = nodes_open_upper_bound
+        output["nodes_visited"] = nodes_visited
+        output["path_size"] = path_size
+        output["path"] = path
     else:
         print("Não há solução possível")
+
+    print(f"Tempo descorrido (segundos): {elapsed_time}\n\n***")
+    write_output(output, output_file)
 
 
 def capture_input() -> Constraints:
     data = list(map(str, sys.stdin.read().split()))
     it = iter(data)
     n = int(next(it))
-    len = n * n
+    len = n**2
     table: list[int] = [-1] * len
     for i in range(len):
         table[i] = int(next(it))
-    level = HFUNCTION_MAP[HFunctionLevel[next(it)]]
+    level = HFunctionLevel[next(it)]
 
     return validate_input((n, tuple(table), level))

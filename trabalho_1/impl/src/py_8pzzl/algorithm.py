@@ -5,7 +5,6 @@ from py_8pzzl.types import (
     Graph,
     HFunctionLevel,
     HeuristicFunction,
-    Path,
     Result,
     State,
 )
