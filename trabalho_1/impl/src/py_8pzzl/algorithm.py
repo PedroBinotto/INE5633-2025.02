@@ -70,6 +70,8 @@ def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Path:
     visited: set[State] = set()
     open = [(h(s, t), 0, s, [s])]
 
+    # TODO: track info to assemble `Result` object
+
     while open:
         _, g_score, current, path = heapq.heappop(open)
 

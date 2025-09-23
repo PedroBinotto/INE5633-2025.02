@@ -1,6 +1,6 @@
 from collections import defaultdict
 from enum import Enum, auto
-from typing import Callable
+from typing import Callable, TypedDict
 
 type State = tuple[int, ...]
 """ Tuple of size N ** 2, wherein N is the board size (edge) """
@@ -17,6 +17,13 @@ type Adj = defaultdict[State, list[State]]
 type Path = list[State] | None
 
 type HeuristicFunction = Callable[[State, State], int]
+
+
+class Result(TypedDict):
+    path: Path
+    visited: set[State]
+    open: set[State]
+    open_upper_bound: int
 
 
 class Direction(Enum):
