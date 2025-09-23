@@ -44,7 +44,12 @@ def validate_input(input: Params) -> Constraints:
 
 def print_result(result: Result | None) -> None:
     if result is not None:
-        pprint(result)
+        # TODO: Exportar resultados requisitados em arquivo json
+        print("\nResultados:\n")
+        print(f"Tamanho do caminho: {len(result['path'])}")
+        print(f"Número de nós visitados: {len(result['visited'])}")
+        print(f"Tamanho da fronteira (número de nós abertos): {len(result['open'])}")
+        print(f"Tamanho máximo observado na fronteira: {result['open_upper_bound']}")
     else:
         print("Não há solução possível")
 

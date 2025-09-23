@@ -14,7 +14,7 @@ type Constraints = tuple[Params, State]
 type Adj = defaultdict[State, list[State]]
 """ Adjacency Matrix """
 
-type Path = list[State] | None
+type Path = list[State]
 
 type HeuristicFunction = Callable[[State, State], int]
 

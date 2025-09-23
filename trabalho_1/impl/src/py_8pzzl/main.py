@@ -20,4 +20,4 @@ def run() -> None:
     elapsed = end - start
 
     print_result(result)
-    print(f"Time elapsed (seconds): {elapsed}")
+    print(f"Time elapsed (seconds): {elapsed}\n\n***")
