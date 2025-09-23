@@ -6,7 +6,7 @@ import time
 import sys
 
 from py_8pzzl.algorithm import HFUNCTION_MAP
-from py_8pzzl.types import Constraints, HFunctionLevel, Params, Path, State
+from py_8pzzl.types import Constraints, HFunctionLevel, Params, Path, Result, State
 
 
 def print_table(table: State, width: int = 5) -> None:
@@ -42,13 +42,9 @@ def validate_input(input: Params) -> Constraints:
     return (input, tuple(solution))
 
 
-def print_result(path: Path) -> None:
-    if path is not None:
-        print("Path:\n")
-        for idx, state in enumerate(path):
-            print(f"{idx}:")
-            print_table(state)
-            print("\n***\n")
+def print_result(result: Result | None) -> None:
+    if result is not None:
+        pprint(result)
     else:
         print("Não há solução possível")
 

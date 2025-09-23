@@ -1,3 +1,4 @@
+import time
 from py_8pzzl.algorithm import HFUNCTION_MAP, a_star
 from py_8pzzl.types import Graph
 from py_8pzzl.utils import capture_input, print_result
@@ -12,4 +13,11 @@ def run() -> None:
     l = params[2]
     g = Graph(s)
 
-    print_result(a_star(g, n, s, t, l))
+    start = time.time()
+    result = a_star(g, n, s, t, l)
+    end = time.time()
+
+    elapsed = end - start
+
+    print_result(result)
+    print(f"Time elapsed (seconds): {elapsed}")

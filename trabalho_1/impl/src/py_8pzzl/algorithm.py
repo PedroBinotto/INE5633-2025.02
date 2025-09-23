@@ -6,6 +6,7 @@ from py_8pzzl.types import (
     HFunctionLevel,
     HeuristicFunction,
     Path,
+    Result,
     State,
 )
 
@@ -47,8 +48,10 @@ def compute_moves(s: State, k: int) -> list[State]:
     return moves
 
 
-def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Path:
+def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Result | None:
     """
+    'A*' search algorithm
+
     :param g: Targeted graph
     :type g: Graph
 
@@ -69,14 +72,21 @@ def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Path:
     """
     visited: set[State] = set()
     open = [(h(s, t), 0, s, [s])]
-
-    # TODO: track info to assemble `Result` object
+    currently_open_count = len(open)
+    open_upper_bound = currently_open_count
 
     while open:
         _, g_score, current, path = heapq.heappop(open)
+        currently_open_count -= 1
 
         if current == t:
-            return path
+            currently_open = set(map(lambda x: x[2], open))
+            return {
+                "open": currently_open,
+                "open_upper_bound": open_upper_bound,
+                "path": path,
+                "visited": visited,
+            }
 
         if current in visited:
             continue
@@ -87,6 +97,9 @@ def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Path:
             if neighbor not in visited:
                 g_next = g_score + 1
                 f_next = g_next + h(neighbor, t)
+                currently_open_count += 1
+                open_upper_bound = max(currently_open_count, open_upper_bound)
+
                 heapq.heappush(open, (f_next, g_next, neighbor, path + [neighbor]))
 
 
