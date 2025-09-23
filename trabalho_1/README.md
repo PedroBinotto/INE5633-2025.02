@@ -52,17 +52,30 @@ E em seguida digitar os dados no seguinte formato:
 
 ```
 M
-E1..EN
+E0..EN
 LEVEL
 ```
 
 Onde:
 
 - _M_ refere-se ao tamanho (do lado) do tabuleiro (ex.: 3 para _8Puzzle_, 4 para _15Puzzle_, etc...);
-- _E1..EN_ referem-se aos números de _(N = M^2)_ de 0 até _N_ (em qualquer ordem) que expressam o estado inicial do tabuleiro;
+- _E0..EN_ referem-se aos números de _(N = M^2)_ de 0 até _N_ (em qualquer ordem) que expressam o estado inicial do tabuleiro;
 - _LEVEL_ é um valor dentre:
     - _**L0:**_ Para execução de _A*_ com heurística _nula_ (custo uniforme);
     - _**L1:**_ Para execução de _A*_ com heurística não admissível;
     - _**L2:**_ Para execução de _A*_ com heurística _Manhattan_;
     - _**L3:**_ Para execução de _A*_ com heurística tunada;
 
+### Formato dos dados de saída do programa
+
+Para cada execução do algoritmo sobre um conjunto de dados de entrada, um arquivo com os dados de saída do programa será gerado no diretório `/output`, de acordo com o seguinte padrão de nomenclatura:
+
+```
+<TIMESTAMP>_<STATE>_<LEVEL>.json
+```
+
+Onde:
+
+- _TIMESTAMP_ refere-se ao _UNIX timestamp_ (_epoch_) associada à execução do algoritmo;
+- _STATE_ refere-se ao estado inicial informado ao programa (_E0..EN_);
+- _LEVEL_ refere-se ao nível de heurística escolhido para a execução do algoritmo;
