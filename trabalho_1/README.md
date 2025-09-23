@@ -7,7 +7,7 @@
 
 No diretório `impl`:
 
-- Para executar **todos** os testes:
+- Para executar **todos** (💀) os testes:
 
 ```bash
 # pwd: INE5633-2025.02/trabalho_1/impl
@@ -17,6 +17,16 @@ make
 
 ***
 
+- Para filtrar os testes de acordo com dimensão/uso de heurística:
+
+```bash
+# pwd: INE5633-2025.02/trabalho_1/impl
+# Dimensão e nível de heurística indicados pelo prefixo N_LEVEL; ex.:
+
+make run POSTFIX=8_L1
+```
+
+***
 - Para executar um teste em específico:
 
 ```bash
