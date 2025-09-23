@@ -5,6 +5,18 @@
 
 ## Execução do projeto
 
+**Requisitos:**
+
+- [Python](https://www.python.org/) >=3.12;
+- [Poetry](https://python-poetry.org/) (para gerenciamento de ambiente virtual e versão do intérprete Python);
+- [Make](https://www.gnu.org/software/make/);
+
+**Recomendações:**
+
+- Executar projeto em ambiente _UNIX-like_;
+
+***
+
 No diretório `impl`:
 
 - Para executar **todos** (💀) os testes:
@@ -32,10 +44,10 @@ make run POSTFIX=8_L1
 ```bash
 # pwd: INE5633-2025.02/trabalho_1/impl
 
-make run TEST=<TEST_CASE>.txt
+make run TEST=<TESTCASE>.txt
 ```
 
-Onde `<TEST_CASE>` refere-se a um cenário de teste elaborado em `impl/resources/`.
+Onde _TESTCASE_ refere-se a um cenário de teste elaborado em `impl/resources/`.
 
 ### Formato dos dados de entrada do programa
 
@@ -79,3 +91,64 @@ Onde:
 - _TIMESTAMP_ refere-se ao _UNIX timestamp_ (_epoch_) associada à execução do algoritmo;
 - _STATE_ refere-se ao estado inicial informado ao programa (_E0..EN_);
 - _LEVEL_ refere-se ao nível de heurística escolhido para a execução do algoritmo;
+
+Cada arquivo apresentará os dados referentes à execução de acordo com o seguinte esquema de organização de conteúdos:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "start_time": {
+      "type": "number"
+    },
+    "end_time": {
+      "type": "number"
+    },
+    "elapsed_time": {
+      "type": "number"
+    },
+    "h_level": {
+      "type": "string"
+    },
+    "size": {
+      "type": "number"
+    },
+    "nodes_open": {
+      "type": "number"
+    },
+    "nodes_open_upper_bound": {
+      "type": "number"
+    },
+    "nodes_visited": {
+      "type": "number"
+    },
+    "path_size": {
+      "type": "number"
+    },
+    "path": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "start_time",
+    "end_time",
+    "elapsed_time",
+    "h_level",
+    "size",
+    "nodes_open",
+    "nodes_open_upper_bound",
+    "nodes_visited",
+    "path_size",
+    "path"
+  ]
+}
+
+```
