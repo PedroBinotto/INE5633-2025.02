@@ -1,7 +1,7 @@
 from datetime import datetime
 import time
 from py_8pzzl.algorithm import HFUNCTION_MAP, a_star
-from py_8pzzl.types import Graph
+from py_8pzzl.types import Graph, Memo
 from py_8pzzl.utils import (
     capture_input,
     export_results,
@@ -19,6 +19,7 @@ def run() -> None:
     l = params[2]
     h = HFUNCTION_MAP[l]
     g = Graph(s)
+    _ = Memo(n)
 
     start = get_unix_time()
     result = a_star(g, n, s, t, h)

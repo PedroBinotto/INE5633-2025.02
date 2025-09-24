@@ -1,11 +1,15 @@
 from collections import defaultdict
 from enum import Enum, auto, StrEnum
 import json
-from typing import Any, Callable, TypedDict
+from typing import Any, Callable, Optional, TypedDict
+
+from py_8pzzl.decorators import Singleton
 
 NAME = "py_8pzzl"
 OUT_DIR = "output"
 OUT_EXT = "json"
+NODE_MAX_SCORE = 10**9
+NODE_MIN_SCORE = 0
 
 type State = tuple[int, ...]
 """ Tuple of size N ** 2, wherein N is the board size (edge) """
@@ -19,9 +23,14 @@ type Constraints = tuple[Params, State]
 type Adj = defaultdict[State, list[State]]
 """ Adjacency Matrix """
 
+type Breadcrumb = dict[State, State]
+""" Represents an inversion of the graph (tree) structure """
+
+type MemoizedState = dict[int, tuple[int, int]]
+
 type Path = list[State]
 
-type HeuristicFunction = Callable[[State, State], int]
+type HeuristicFunction = Callable[[State, State, int], int]
 
 
 class HFunctionLevel(StrEnum):
@@ -39,16 +48,16 @@ class Direction(Enum):
 
 
 class Result(TypedDict):
-    path: Path
+    path: Path | None
     visited: set[State]
     open: set[State]
     open_upper_bound: int
 
 
 class OutputModel(TypedDict):
-    start_time: int
-    end_time: int
-    elapsed_time: int
+    start_time: float
+    end_time: float
+    elapsed_time: float
     h_level: HFunctionLevel
     size: int
     path: Path | None
@@ -83,3 +92,20 @@ class Graph:
 
     def adj(self, v: State) -> list[State]:
         return self.__adj[v]
+
+
+class Memo(metaclass=Singleton):
+    def __init__(self, n: int | None = None):
+        if n is None:
+            raise ValueError(
+                "Cache may not be instantiated without informing board dimension"
+            )
+        self.__n = n
+        self.__cache: dict[State, dict[int, tuple[int, int]]] = dict()
+
+    def memoized(self, s: State) -> MemoizedState:
+        cached = self.__cache.get(s)
+        if cached is None:
+            cached = {val: divmod(i, self.__n) for i, val in enumerate(s)}
+            self.__cache[s] = cached
+        return cached
