@@ -1,44 +1,54 @@
 from collections import defaultdict
-from enum import Enum
+from enum import Enum, auto
 from typing import Callable, TypedDict, Set
 
-State = tuple[int,...]
-HeuristicFunction = Callable[[State,State],int]
+State = tuple[int, ...]
+Params = tuple[int, State, "HFunctionLevel"]
+Constraints = tuple[Params, State]
+Adj = dict[State, list[State]]
 Path = list[State] | None
+HeuristicFunction = Callable[[State, State], int]
 
-# só pra variar, ordem trocada dos enums
-class Direcao(Enum):
-    CIMA = 1
-    BAIXO = 2
-    ESQ = 3
-    DIR = 4
+
+class Direction(Enum):
+    UP = auto()
+    DOWN = auto()
+    RIGHT = auto()
+    LEFT = auto()
+
 
 class HFunctionLevel(Enum):
-    L0="L0"; L1="L1"; L2="L2"; L3="L3"
+    L0 = "L0"
+    L1 = "L1"
+    L2 = "L2"
+    L3 = "L3"
 
-class Grafo:
-    def __init__(self, start: State):
-        self._adj = defaultdict(list)
-        self._adj[start] = []
 
-    def add_edge(self, v: State, w: State):
-        if w not in self._adj:
-            self._adj[w]=[]
-        if w not in self._adj[v]:
-            self._adj[v].append(w)
+class Graph:
+    def __init__(self, s: State) -> None:
+        self.__adj: defaultdict[State, list[State]] = defaultdict()
+        self.__adj[s] = []
 
-    def vertices(self):
-        return list(self._adj.keys())
+    def add_edge(self, v: State, w: State) -> None:
+        if w in self.__adj:
+            return
 
-    def vizinhos(self, v: State):
-        return self._adj[v]
+        self.__adj[w] = []
+        self.__adj[v].append(w)
 
-class Resultado(TypedDict, total=False):
-    aberto: Set[State]
-    limite_aberto: int
-    path: Path
-    visitados: Set[State]
-    parcial: bool
+    def v(self) -> list[State]:
+        return list(self.__adj.keys())
+
+    def adj(self, v: State) -> list[State]:
+        return self.__adj[v]
+
+
+class Result(TypedDict, total=False):
+    open: Set["State"]
+    open_upper_bound: int
+    path: "Path"
+    visited: Set["State"]
+    partial: bool
     depth: int
-    tempo: float
-    nos: int
+    elapsed_time: float
+    nodes_visited: int
