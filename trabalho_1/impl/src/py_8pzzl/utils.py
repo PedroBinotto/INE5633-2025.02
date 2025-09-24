@@ -1,7 +1,7 @@
 from datetime import datetime
 from importlib import resources
 import json
-from pathlib import Path
+import pathlib
 from typing import Any, Callable
 from collections import deque
 from math import sqrt
@@ -10,26 +10,30 @@ import sys
 
 from py_8pzzl.types import (
     NAME,
+    NODE_MIN_SCORE,
     OUT_DIR,
     OUT_EXT,
     Constraints,
     HFunctionLevel,
+    Memo,
+    MemoizedState,
     OutputModel,
     Params,
+    Path,
     Result,
     SetEncoder,
     State,
 )
 
 
-def get_project_root() -> Path:
+def get_project_root() -> pathlib.Path:
     root = resources.files(NAME)
-    if isinstance(root, Path):
+    if isinstance(root, pathlib.Path):
         return root
     raise SystemError("Erro ao acessar sisema de arquivos")
 
 
-def get_output_dir() -> Path:
+def get_output_dir() -> pathlib.Path:
     return get_project_root().parent.parent / OUT_DIR
 
 
@@ -38,7 +42,7 @@ def get_output_file_name(s: State, l: HFunctionLevel) -> str:
     return f"{get_unix_timestamp()}_{s_str}_{l.name}.{OUT_EXT}"
 
 
-def get_output_file(s: State, l: HFunctionLevel) -> Path:
+def get_output_file(s: State, l: HFunctionLevel) -> pathlib.Path:
     return get_output_dir() / get_output_file_name(s, l)
 
 
@@ -83,19 +87,19 @@ def validate_input(input: Params) -> Constraints:
     return (input, tuple(solution))
 
 
-def write_output(data: OutputModel, output_file: Path) -> None:
+def write_output(data: OutputModel, output_file: pathlib.Path) -> None:
     with open(output_file, "w") as f:
         json.dump(data, f, cls=SetEncoder)
 
 
 def export_results(
-    start_time: int,
-    end_time: int,
-    elapsed_time: int,
+    start_time: float,
+    end_time: float,
+    elapsed_time: float,
     h_level: HFunctionLevel,
     size: int,
     result: Result | None,
-    output_file: Path,
+    output_file: pathlib.Path,
 ) -> None:
     output_file.parent.mkdir(exist_ok=True, parents=True)
     output: OutputModel = {
@@ -116,7 +120,7 @@ def export_results(
         nodes_open_upper_bound = result["open_upper_bound"]
         nodes_visited = len(result["visited"])
         path = result["path"]
-        path_size = len(path)
+        path_size = len(path) if path is not None else NODE_MIN_SCORE
 
         print("\nResultados:\n")
         print(f"Tamanho do caminho: {path_size}")
@@ -147,3 +151,28 @@ def capture_input() -> Constraints:
     level = HFunctionLevel[next(it)]
 
     return validate_input((n, tuple(table), level))
+
+
+def initialize_memo(n: int) -> None:
+    _ = Memo(n)
+
+
+def use_memo(s: State) -> MemoizedState:
+    try:
+        return Memo().memoized(s)
+    except Exception:
+        raise ValueError("Tentativa de leitura sobre cache não inicializada")
+
+
+def result(
+    visited_nodes: set[State],
+    open_nodes: set[State],
+    open_nodes_upper_bound: int,
+    path: Path | None,
+) -> Result:
+    return {
+        "open": open_nodes,
+        "open_upper_bound": open_nodes_upper_bound,
+        "path": path,
+        "visited": visited_nodes,
+    }

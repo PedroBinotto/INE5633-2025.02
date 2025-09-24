@@ -1,13 +1,18 @@
 import heapq
 from typing import Callable
 from py_8pzzl.types import (
+    NODE_MAX_SCORE,
+    NODE_MIN_SCORE,
+    Breadcrumb,
     Direction,
     Graph,
     HFunctionLevel,
     HeuristicFunction,
+    Path,
     Result,
     State,
 )
+from py_8pzzl.utils import result, use_memo
 
 
 def compute_moves(s: State, k: int) -> list[State]:
@@ -47,7 +52,18 @@ def compute_moves(s: State, k: int) -> list[State]:
     return moves
 
 
-def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Result | None:
+def reconstruct_path(breadcrumb: Breadcrumb, end: State) -> Path:
+    path = [end]
+    while end in breadcrumb:
+        end = breadcrumb[end]
+        path.append(end)
+    path.reverse()
+    return path
+
+
+def a_star(
+    g: Graph, n: int, s: State, t: State, h: HeuristicFunction, max_nodes: int = 400_000
+) -> Result | None:
     """
     'A*' search algorithm
 
@@ -66,96 +82,135 @@ def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction) -> Result
     :param h: Heuristic function
     :type h: HeuristicFunction
 
+    :param max_nodes: Maximum number of nodes to visit before returning partial result
+    :type max_nodes: int
+
     :return: Path
     :rtype: Path
     """
-    visited: set[State] = set()
-    open = [(h(s, t), 0, s, [s])]
-    currently_open_count = len(open)
-    open_upper_bound = currently_open_count
 
-    while open:
-        _, g_score, current, path = heapq.heappop(open)
-        currently_open_count -= 1
+    visited_nodes: set[State] = set()
+    open_nodes: set[State] = {s}
+    open_nodes_upper_bound = len(open_nodes)
+    gs: dict[State, int] = {s: NODE_MIN_SCORE}
+    priority_queue: list[tuple[int, int, State]] = [(h(s, t, n), NODE_MIN_SCORE, s)]
+    breadcrumb: Breadcrumb = {}
+
+    best_state: State = s
+    best_f: int = h(s, t, n)
+
+    while priority_queue:
+        if len(visited_nodes) >= max_nodes:
+            return result(
+                visited_nodes,
+                open_nodes,
+                open_nodes_upper_bound,
+                reconstruct_path(breadcrumb, best_state),
+            )
+
+        f_current, g_current, current = heapq.heappop(priority_queue)
+        open_nodes.discard(current)
 
         if current == t:
-            currently_open = set(map(lambda x: x[2], open))
-            return {
-                "open": currently_open,
-                "open_upper_bound": open_upper_bound,
-                "path": path,
-                "visited": visited,
-            }
+            return result(
+                visited_nodes,
+                open_nodes,
+                open_nodes_upper_bound,
+                reconstruct_path(breadcrumb, current),
+            )
 
-        if current in visited:
+        if current in visited_nodes:
             continue
-        visited.add(current)
+        visited_nodes.add(current)
+
+        if f_current < best_f:
+            best_f, best_state = f_current, current
 
         for neighbor in compute_moves(current, n):
             g.add_edge(current, neighbor)
-            if neighbor not in visited:
-                g_next = g_score + 1
-                f_next = g_next + h(neighbor, t)
-                currently_open_count += 1
-                open_upper_bound = max(currently_open_count, open_upper_bound)
 
-                heapq.heappush(open, (f_next, g_next, neighbor, path + [neighbor]))
+            tentative_g = g_current + 1
+
+            if neighbor in visited_nodes and tentative_g >= gs.get(
+                neighbor, NODE_MAX_SCORE
+            ):
+                continue
+
+            if tentative_g < gs.get(neighbor, NODE_MAX_SCORE):
+                breadcrumb[neighbor] = current
+                gs[neighbor] = tentative_g
+                f_neighbor = tentative_g + h(neighbor, t, n)
+                heapq.heappush(priority_queue, (f_neighbor, tentative_g, neighbor))
+                open_nodes.add(neighbor)
+                if len(open_nodes) > open_nodes_upper_bound:
+                    open_nodes_upper_bound = len(open_nodes)
+
+    return {
+        "open": open_nodes,
+        "open_upper_bound": open_nodes_upper_bound,
+        "path": None,
+        "visited": visited_nodes,
+    }
 
 
-def null_heuristic(_x: State, _y: State) -> int:
-    return 0
+def null_heuristic(_x: State, _y: State, _n: int) -> int:
+    return NODE_MIN_SCORE
 
 
-def non_admissible_heuristic(x: State, y: State) -> int:
-    n = int(len(x) ** 0.5)
-    total = 0
+def non_admissible_heuristic(x: State, y: State, n: int) -> int:
+    memo = use_memo(y, n)
+    total = NODE_MIN_SCORE
     for i, v in enumerate(x):
         if v == 0:
             continue
-        j = y.index(v)
         xi, yi = divmod(i, n)
-        xj, yj = divmod(j, n)
-        total += abs(xi - xj) + abs(yi - yj)
+        gx, gy = memo[v]
+        total += abs(xi - gx) + abs(yi - gy)
     return 2 * total
 
 
-def manhattan_heuristic(x: State, y: State) -> int:
-    n = int(len(x) ** 0.5)
-    total = 0
+def manhattan_heuristic(x: State, y: State, n: int) -> int:
+    memo = use_memo(y, n)
+    total = NODE_MIN_SCORE
     for i, v in enumerate(x):
         if v == 0:
             continue
-        j = y.index(v)
         xi, yi = divmod(i, n)
-        xj, yj = divmod(j, n)
-        total += abs(xi - xj) + abs(yi - yj)
+        gx, gy = memo[v]
+        total += abs(xi - gx) + abs(yi - gy)
     return total
 
 
-def custom_heuristic(x: State, y: State) -> int:
-    n = int(len(x) ** 0.5)
-    base = manhattan_heuristic(x, y)
-    extra = 0
+def custom_heuristic(x: State, y: State, n: int) -> int:
+    memo = use_memo(y, n)
+    base = NODE_MIN_SCORE
+    for i, v in enumerate(x):
+        if v == 0:
+            continue
+        xi, yi = divmod(i, n)
+        gx, gy = memo[v]
+        base += abs(xi - gx) + abs(yi - gy)
+
+    extra = NODE_MIN_SCORE
     for r in range(n):
         row = x[r * n : (r + 1) * n]
-        for i in range(n):
-            for j in range(i + 1, n):
-                a, b = row[i], row[j]
-                if a == 0 or b == 0:
-                    continue
-                ga, gb = y.index(a) // n, y.index(b) // n
-                if ga == gb == r and y.index(a) > y.index(b):
+        idxs = [(i, v) for i, v in enumerate(row) if v != 0 and memo[v][0] == r]
+        for i in range(len(idxs)):
+            for j in range(i + 1, len(idxs)):
+                vi = idxs[i][1]
+                vj = idxs[j][1]
+                if memo[vi][1] > memo[vj][1]:
                     extra += 2
     for c in range(n):
         col = [x[r * n + c] for r in range(n)]
-        for i in range(n):
-            for j in range(i + 1, n):
-                a, b = col[i], col[j]
-                if a == 0 or b == 0:
-                    continue
-                ga, gb = y.index(a) % n, y.index(b) % n
-                if ga == gb == c and y.index(a) > y.index(b):
+        idxs = [(i, v) for i, v in enumerate(col) if v != 0 and memo[v][1] == c]
+        for i in range(len(idxs)):
+            for j in range(i + 1, len(idxs)):
+                vi = idxs[i][1]
+                vj = idxs[j][1]
+                if memo[vi][0] > memo[vj][0]:
                     extra += 2
+
     return base + extra
 
 
