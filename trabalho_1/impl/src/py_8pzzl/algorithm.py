@@ -101,10 +101,7 @@ def a_star(
     while priority_queue:
         if len(visited_nodes) >= max_nodes:
             return result(
-                visited_nodes,
-                open_nodes,
-                upper_bound,
-                trace_path(breadcrumb, top_s),
+                visited_nodes, open_nodes, upper_bound, trace_path(breadcrumb, top_s)
             )
 
         curr_h, curr_g, curr_s = pq_pop(priority_queue)
@@ -112,10 +109,7 @@ def a_star(
 
         if curr_s == t:
             return result(
-                visited_nodes,
-                open_nodes,
-                upper_bound,
-                trace_path(breadcrumb, curr_s),
+                visited_nodes, open_nodes, upper_bound, trace_path(breadcrumb, curr_s)
             )
 
         if curr_s in visited_nodes:
@@ -142,9 +136,4 @@ def a_star(
                 if len(open_nodes) > upper_bound:
                     upper_bound = len(open_nodes)
 
-    return {
-        "open": open_nodes,
-        "open_upper_bound": upper_bound,
-        "path": None,
-        "visited": visited_nodes,
-    }
+    return result(visited_nodes, open_nodes, upper_bound, None)
