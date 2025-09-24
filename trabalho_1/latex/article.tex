@@ -81,11 +81,98 @@
 
 \printglossary[title=Glossário, toctitle=Glossário]
 
-\section{Nome de secção}
-\subsection{Subsecção}
-\paragraph{}
+\section{Q1}
 
-Conteúdo de parágrafo
+\paragraph{Proposta ---} enunciado na \textit{Questão 1}:
+
+\begin{quote}
+Quais os métodos ou funções principais e suas relações com o algoritmo A*?
+\end{quote}
+
+\subsubsection{Solução --- \textbf{Q1}}
+
+O código inicia lendo os inputs da entrada, utilizando a função \texttt{capture\_input()} para determinar o tamanho do tabuleiro, o nível de dificuldade e a heurística desejada, no retorno dessa função é chamada a função \texttt{validate\_input()} que ordena o tabuleiro para encontrar o estado alvo além de verificar se há uma solução possível ou se a entrada é inválida. Após isso, o tempo de execução iniciado e são passados para função \texttt{a\_star()} -- função que contém o algoritmo em si -- os seguintes parâmetros:
+
+\begin{itemize}
+  \item \textbf{g} - Grafo que serve de estrutura de dados para o algoritmo, contendo apenas o estado inicial
+  \item \textbf{n} - Tamanho do tabuleiro
+  \item \textbf{s} - Estado inicial
+  \item \textbf{t} - Estado alvo
+  \item \textbf{l} - Heurística a ser utilizada
+\end{itemize}
+
+Na função \texttt{a\_star()} então são definidos os conjuntos que armazenam os estados visitados e os estados abertos, bem como o número de estados abertos e o número máximo de estados abertos (fronteira máxima). Nessa mesma função é executado em um laço de repetição o algoritmo até que o estado atual (\texttt{current}) seja o estado alvo (\texttt{t}), nesse momento é retornado as seguintes informações:
+
+\begin{itemize}
+  \item \textbf{open} - Conjunto de estados abertos
+  \item \textbf{open\_upper\_bound} - Número máximo de estados abertos simultâneamente
+  \item \textbf{path} - caminho descoberto pelo algoritmo para chegar ao estado destino
+  \item \textbf{visited} - Conjunto de estados visitados
+\end{itemize}
+
+Por fim, o tempo de execução é parado e então são printados na tela os resultados e o tempo de execução do algoritmo.
+
+\section{Q2}
+
+\paragraph{Proposta ---} enunciado na \textit{Questão 2}:
+
+\begin{quote}
+Como foi gerenciada a fronteira, ou seja, quais verificações foram feitas antes de adicionar um estado na fronteira? Explicar e mostrar os respectivos trechos de código:
+\end{quote}
+
+\subsubsection{Solução --- \textbf{Q2}}
+
+\paragraph{}
+lakdalk
+
+\section{Q3}
+
+\paragraph{Proposta ---} enunciado na \textit{Questão 3}:
+
+\begin{quote}
+Descrição das heurísticas e comparação da faixa de valores e da precisão delas (no mínimo: dois casos difíceis, dois médios e um fácil); breve descrição sobre suas implementações.
+\end{quote}
+
+\subsubsection{Solução --- \textbf{Q3}}
+
+Para atender os requisitos do trabalho foram feitas três heurísticas e o algoritmo sem heurísticas (custo uniforme – L0). As heurísticas escolhidas foram:
+
+\begin{itemize}
+    \item \textbf{Heurística não admissível (L1)} - Manhattan x 2
+    \item \textbf{Heurística admissível (L2)} - Manhattan
+    \item \textbf{Melhor Heurística admissível (L3)} - Manhattan + Conflitos Lineares
+\end{itemize}
+
+A heurística de Manhattan calcula a distância em que cada peça está posicionada e da sua posição destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e horizontal. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la com o valor dobrado a torna não admissível pois superestima o custo real.
+
+A utilização de Manhattan + Conflitos Lineares foi escolhida como a melhor heurística possível pois considera a distância de Manhattan, explicada anteriormente, e também leva em consideração a quantidade de peças na linha ou coluna correta mas em posição errada.
+
+\section{Q4}
+
+\paragraph{Proposta ---} enunciado na \textit{Questão 4}:
+
+\begin{quote}
+Breve análise do desempenho da implementação com uma tabela comparativa (usando as informações da saída - itens a) a d)) das 4 variações implementadas (no mínimo: um caso difícil, um médio e um fácil para as abordagens 3 e 4 e um médio e um fácil para as abordagens 1 e 2):
+\end{quote}
+
+\subsubsection{Solução --- \textbf{Q4}}
+
+\paragraph{}
+dkadkajaksd
+
+\section{Q5}
+
+\paragraph{Proposta ---} enunciado na \textit{Questão 5}:
+
+\begin{quote}
+Caso algum dos objetivos não tenha sido alcançado explique o que você faria VS o que foi feito e exatamente qual o(s)
+  problema(s) encontrado(s), bem como  limitações da implementação:
+\end{quote}
+
+\subsubsection{Solução --- \textbf{Q5}}
+
+\paragraph{}
+Os objetivos foram alcançados, porém, foi necessária a otimização de como as estruturas estavam sendo usadas para armazenar as informações de execução das buscas. Como exemplo, tem-se a estruturação de como armazenar o caminho dos nós percorridos e abertos para casos onde há milhares de nós percorridos, causando memory leak caso a estrutura e método de armazenamento não sejam adequados.
 
 \newpage
 \section{Bibliografia}
