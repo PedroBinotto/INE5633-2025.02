@@ -26,7 +26,9 @@ type Adj = defaultdict[State, list[State]]
 type Breadcrumb = dict[State, State]
 """ Represents an inversion of the graph (tree) structure """
 
-type MemoizedState = dict[int, tuple[int, int]]
+type Coords = tuple[int, int]
+
+type MemoizedState = dict[int, Coords]
 
 type Path = list[State]
 

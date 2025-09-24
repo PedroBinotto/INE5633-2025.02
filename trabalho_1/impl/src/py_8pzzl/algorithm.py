@@ -1,4 +1,4 @@
-import heapq
+from heapq import heappop as pq_pop, heappush as pq_push
 from typing import Callable
 from py_8pzzl.types import (
     NODE_MAX_SCORE,
@@ -52,7 +52,7 @@ def compute_moves(s: State, k: int) -> list[State]:
     return moves
 
 
-def reconstruct_path(breadcrumb: Breadcrumb, end: State) -> Path:
+def trace_path(breadcrumb: Breadcrumb, end: State) -> Path:
     path = [end]
     while end in breadcrumb:
         end = breadcrumb[end]
@@ -82,131 +82,130 @@ def a_star(
     :param h: Heuristic function
     :type h: HeuristicFunction
 
-    :param max_nodes: Maximum number of nodes to visit before returning partial result
+    :param max_nodes: Hard limit safeguard for explored nodes
     :type max_nodes: int
 
-    :return: Path
-    :rtype: Path
+    :return: Result
+    :rtype: Result | None
     """
 
     visited_nodes: set[State] = set()
     open_nodes: set[State] = {s}
-    open_nodes_upper_bound = len(open_nodes)
-    gs: dict[State, int] = {s: NODE_MIN_SCORE}
+    upper_bound = len(open_nodes)
     priority_queue: list[tuple[int, int, State]] = [(h(s, t, n), NODE_MIN_SCORE, s)]
     breadcrumb: Breadcrumb = {}
+    gs: dict[State, int] = {s: NODE_MIN_SCORE}
 
-    best_state: State = s
-    best_f: int = h(s, t, n)
+    top_s: State = s
+    top_h: int = h(s, t, n)
 
     while priority_queue:
         if len(visited_nodes) >= max_nodes:
             return result(
                 visited_nodes,
                 open_nodes,
-                open_nodes_upper_bound,
-                reconstruct_path(breadcrumb, best_state),
+                upper_bound,
+                trace_path(breadcrumb, top_s),
             )
 
-        f_current, g_current, current = heapq.heappop(priority_queue)
-        open_nodes.discard(current)
+        curr_h, curr_g, curr_s = pq_pop(priority_queue)
+        open_nodes.discard(curr_s)
 
-        if current == t:
+        if curr_s == t:
             return result(
                 visited_nodes,
                 open_nodes,
-                open_nodes_upper_bound,
-                reconstruct_path(breadcrumb, current),
+                upper_bound,
+                trace_path(breadcrumb, curr_s),
             )
 
-        if current in visited_nodes:
+        if curr_s in visited_nodes:
             continue
-        visited_nodes.add(current)
+        visited_nodes.add(curr_s)
 
-        if f_current < best_f:
-            best_f, best_state = f_current, current
+        if curr_h < top_h:
+            top_h, top_s = curr_h, curr_s
 
-        for neighbor in compute_moves(current, n):
-            g.add_edge(current, neighbor)
+        for move in compute_moves(curr_s, n):
+            g.add_edge(curr_s, move)
 
-            tentative_g = g_current + 1
+            next_g = curr_g + 1
 
-            if neighbor in visited_nodes and tentative_g >= gs.get(
-                neighbor, NODE_MAX_SCORE
-            ):
+            if move in visited_nodes and next_g >= gs.get(move, NODE_MAX_SCORE):
                 continue
 
-            if tentative_g < gs.get(neighbor, NODE_MAX_SCORE):
-                breadcrumb[neighbor] = current
-                gs[neighbor] = tentative_g
-                f_neighbor = tentative_g + h(neighbor, t, n)
-                heapq.heappush(priority_queue, (f_neighbor, tentative_g, neighbor))
-                open_nodes.add(neighbor)
-                if len(open_nodes) > open_nodes_upper_bound:
-                    open_nodes_upper_bound = len(open_nodes)
+            if next_g < gs.get(move, NODE_MAX_SCORE):
+                breadcrumb[move] = curr_s
+                gs[move] = next_g
+                f_neighbor = next_g + h(move, t, n)
+                pq_push(priority_queue, (f_neighbor, next_g, move))
+                open_nodes.add(move)
+                if len(open_nodes) > upper_bound:
+                    upper_bound = len(open_nodes)
 
     return {
         "open": open_nodes,
-        "open_upper_bound": open_nodes_upper_bound,
+        "open_upper_bound": upper_bound,
         "path": None,
         "visited": visited_nodes,
     }
 
 
-def null_heuristic(_x: State, _y: State, _n: int) -> int:
+def null_heuristic(_s: State, _t: State, _n: int) -> int:
     return NODE_MIN_SCORE
 
 
-def non_admissible_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y)
+def non_admissible_heuristic(s: State, t: State, n: int) -> int:
+    memo = use_memo(t)
     total = NODE_MIN_SCORE
-    for i, v in enumerate(x):
+    for idx, v in enumerate(s):
         if v == 0:
             continue
-        xi, yi = divmod(i, n)
-        gx, gy = memo[v]
-        total += abs(xi - gx) + abs(yi - gy)
+        x, y = divmod(idx, n)
+        g_x, g_y = memo[v]
+        total += abs(x - g_x) + abs(y - g_y)
     return 2 * total
 
 
-def manhattan_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y)
+def manhattan_heuristic(s: State, t: State, n: int) -> int:
+    memo = use_memo(t)
     total = NODE_MIN_SCORE
-    for i, v in enumerate(x):
+    for idx, v in enumerate(s):
         if v == 0:
             continue
-        xi, yi = divmod(i, n)
-        gx, gy = memo[v]
-        total += abs(xi - gx) + abs(yi - gy)
+        x, y = divmod(idx, n)
+        g_x, g_y = memo[v]
+        total += abs(x - g_x) + abs(y - g_y)
     return total
 
 
-def custom_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y)
+def custom_heuristic(s: State, t: State, n: int) -> int:
+    memo = use_memo(t)
     base = NODE_MIN_SCORE
-    for i, v in enumerate(x):
+    for idx, v in enumerate(s):
         if v == 0:
             continue
-        xi, yi = divmod(i, n)
-        gx, gy = memo[v]
-        base += abs(xi - gx) + abs(yi - gy)
+        x, y = divmod(idx, n)
+        g_x, g_y = memo[v]
+        base += abs(x - g_x) + abs(y - g_y)
 
     extra = NODE_MIN_SCORE
+
     for r in range(n):
-        row = x[r * n : (r + 1) * n]
+        row = s[r * n : (r + 1) * n]
         idxs = [(i, v) for i, v in enumerate(row) if v != 0 and memo[v][0] == r]
-        for i in range(len(idxs)):
-            for j in range(i + 1, len(idxs)):
-                vi = idxs[i][1]
+        for idx in range(len(idxs)):
+            for j in range(idx + 1, len(idxs)):
+                vi = idxs[idx][1]
                 vj = idxs[j][1]
                 if memo[vi][1] > memo[vj][1]:
                     extra += 2
     for c in range(n):
-        col = [x[r * n + c] for r in range(n)]
+        col = [s[r * n + c] for r in range(n)]
         idxs = [(i, v) for i, v in enumerate(col) if v != 0 and memo[v][1] == c]
-        for i in range(len(idxs)):
-            for j in range(i + 1, len(idxs)):
-                vi = idxs[i][1]
+        for idx in range(len(idxs)):
+            for j in range(idx + 1, len(idxs)):
+                vi = idxs[idx][1]
                 vj = idxs[j][1]
                 if memo[vi][0] > memo[vj][0]:
                     extra += 2
