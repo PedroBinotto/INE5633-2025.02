@@ -35,6 +35,13 @@ type Path = list[State]
 type HeuristicFunction = Callable[[State, State, int], int]
 
 
+class HNamespace(TypedDict):
+    l0: HeuristicFunction
+    l1: HeuristicFunction
+    l2: HeuristicFunction
+    l3: HeuristicFunction
+
+
 class HFunctionLevel(StrEnum):
     L0 = "L0"
     L1 = "L1"

@@ -1,6 +1,5 @@
-from datetime import datetime
-import time
-from py_8pzzl.algorithm import HFUNCTION_MAP, a_star
+from py_8pzzl.algorithm import a_star
+from py_8pzzl.heuristic import resolve
 from py_8pzzl.types import Graph, Memo
 from py_8pzzl.utils import (
     capture_input,
@@ -17,7 +16,7 @@ def run() -> None:
     n = params[0]
     s = params[1]
     l = params[2]
-    h = HFUNCTION_MAP[l]
+    h = resolve(l)
     g = Graph(s)
     _ = Memo(n)
 

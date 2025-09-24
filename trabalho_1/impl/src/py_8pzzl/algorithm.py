@@ -6,13 +6,12 @@ from py_8pzzl.types import (
     Breadcrumb,
     Direction,
     Graph,
-    HFunctionLevel,
     HeuristicFunction,
     Path,
     Result,
     State,
 )
-from py_8pzzl.utils import result, use_memo
+from py_8pzzl.utils import result
 
 
 def compute_moves(s: State, k: int) -> list[State]:
@@ -149,73 +148,3 @@ def a_star(
         "path": None,
         "visited": visited_nodes,
     }
-
-
-def null_heuristic(_s: State, _t: State, _n: int) -> int:
-    return NODE_MIN_SCORE
-
-
-def non_admissible_heuristic(s: State, t: State, n: int) -> int:
-    memo = use_memo(t)
-    total = NODE_MIN_SCORE
-    for idx, v in enumerate(s):
-        if v == 0:
-            continue
-        x, y = divmod(idx, n)
-        g_x, g_y = memo[v]
-        total += abs(x - g_x) + abs(y - g_y)
-    return 2 * total
-
-
-def manhattan_heuristic(s: State, t: State, n: int) -> int:
-    memo = use_memo(t)
-    total = NODE_MIN_SCORE
-    for idx, v in enumerate(s):
-        if v == 0:
-            continue
-        x, y = divmod(idx, n)
-        g_x, g_y = memo[v]
-        total += abs(x - g_x) + abs(y - g_y)
-    return total
-
-
-def custom_heuristic(s: State, t: State, n: int) -> int:
-    memo = use_memo(t)
-    base = NODE_MIN_SCORE
-    for idx, v in enumerate(s):
-        if v == 0:
-            continue
-        x, y = divmod(idx, n)
-        g_x, g_y = memo[v]
-        base += abs(x - g_x) + abs(y - g_y)
-
-    extra = NODE_MIN_SCORE
-
-    for r in range(n):
-        row = s[r * n : (r + 1) * n]
-        idxs = [(i, v) for i, v in enumerate(row) if v != 0 and memo[v][0] == r]
-        for idx in range(len(idxs)):
-            for j in range(idx + 1, len(idxs)):
-                vi = idxs[idx][1]
-                vj = idxs[j][1]
-                if memo[vi][1] > memo[vj][1]:
-                    extra += 2
-    for c in range(n):
-        col = [s[r * n + c] for r in range(n)]
-        idxs = [(i, v) for i, v in enumerate(col) if v != 0 and memo[v][1] == c]
-        for idx in range(len(idxs)):
-            for j in range(idx + 1, len(idxs)):
-                vi = idxs[idx][1]
-                vj = idxs[j][1]
-                if memo[vi][0] > memo[vj][0]:
-                    extra += 2
-
-    return base + extra
-
-
-HFUNCTION_MAP: dict[HFunctionLevel, HeuristicFunction] = {
-    HFunctionLevel.L0: null_heuristic,
-    HFunctionLevel.L1: non_admissible_heuristic,
-    HFunctionLevel.L2: manhattan_heuristic,
-    HFunctionLevel.L3: custom_heuristic,
-}
