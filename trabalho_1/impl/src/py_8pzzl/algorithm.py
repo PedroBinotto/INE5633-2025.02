@@ -158,7 +158,7 @@ def null_heuristic(_x: State, _y: State, _n: int) -> int:
 
 
 def non_admissible_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y, n)
+    memo = use_memo(y)
     total = NODE_MIN_SCORE
     for i, v in enumerate(x):
         if v == 0:
@@ -170,7 +170,7 @@ def non_admissible_heuristic(x: State, y: State, n: int) -> int:
 
 
 def manhattan_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y, n)
+    memo = use_memo(y)
     total = NODE_MIN_SCORE
     for i, v in enumerate(x):
         if v == 0:
@@ -182,7 +182,7 @@ def manhattan_heuristic(x: State, y: State, n: int) -> int:
 
 
 def custom_heuristic(x: State, y: State, n: int) -> int:
-    memo = use_memo(y, n)
+    memo = use_memo(y)
     base = NODE_MIN_SCORE
     for i, v in enumerate(x):
         if v == 0:
