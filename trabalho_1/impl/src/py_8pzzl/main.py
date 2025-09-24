@@ -1,11 +1,12 @@
 from py_8pzzl.algorithm import a_star
 from py_8pzzl.heuristic import resolve
-from py_8pzzl.types import Graph, Memo
+from py_8pzzl.types import Graph
 from py_8pzzl.utils import (
     capture_input,
     export_results,
     get_output_file,
     get_unix_time,
+    initialize_memo,
 )
 
 
@@ -18,7 +19,7 @@ def run() -> None:
     l = params[2]
     h = resolve(l)
     g = Graph(s)
-    _ = Memo(n)
+    initialize_memo(n)
 
     start = get_unix_time()
     result = a_star(g, n, s, t, h)
