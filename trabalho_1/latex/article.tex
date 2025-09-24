@@ -7,6 +7,7 @@
 \usepackage{authblk}
 \usepackage{cite}
 \usepackage{fontspec}
+\usepackage{listings}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{relsize}
@@ -39,6 +40,21 @@
     filecolor  = black,
     linktoc    = page
 }%
+
+\lstset{
+    language=Python,
+    backgroundcolor=\color{white},
+    basicstyle=\ttfamily\small\color{black},
+    commentstyle=\color{gray}\textit,
+    keywordstyle=\color{MidnightBlue}\bfseries,
+    stringstyle=\color{OliveGreen},
+    numbers=left,
+    numberstyle=\tiny\color{darkgray},
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{lightgray},
+    captionpos=b,
+}
 
 % \newglossaryentry{gls} {
 %   name={GLS},
@@ -78,26 +94,78 @@ Quais os métodos ou funções principais e suas relações com o algoritmo A*?
 
 \subsubsection{Solução --- \textbf{Q1}}
 
-O código inicia lendo os inputs da entrada, utilizando a função \texttt{capture\_input()} para determinar o tamanho do tabuleiro, o nível de dificuldade e a heurística desejada, no retorno dessa função é chamada a função \texttt{validate\_input()} que ordena o tabuleiro para encontrar o estado alvo além de verificar se há uma solução possível ou se a entrada é inválida. Após isso, o tempo de execução iniciado e são passados para função \texttt{a\_star()} -- função que contém o algoritmo em si -- os seguintes parâmetros:
+\paragraph{I/O}
+Primeiramente, os dados de entrada do programa são lidos e interpretados pela função \texttt{capture\_input}. Os dados deverão ser informados no seguinte formato:
 
+\begin{verbatim}
+M
+E0..EN
+LEVEL
+\end{verbatim}
+
+Onde:
 \begin{itemize}
-  \item \textbf{g} - Grafo que serve de estrutura de dados para o algoritmo, contendo apenas o estado inicial
-  \item \textbf{n} - Tamanho do tabuleiro
-  \item \textbf{s} - Estado inicial
-  \item \textbf{t} - Estado alvo
-  \item \textbf{l} - Heurística a ser utilizada
+  \item \textit{M} refere-se ao tamanho (do lado) do tabuleiro (ex.: 3 para \textit{8Puzzle} , 4 para \textit{15Puzzle}, etc...);
+\item \textit{E0..EN} referem-se aos números de ($N = M^2$) de 0 até \textit{N} (em qualquer ordem) que expressam o estado inicial do tabuleiro;
+\item \textit{LEVEL} é um valor dentre:
+  \begin{itemize}
+    \item \textbf{\texttt{L0:}} Para execução de \textit{A*} com heurística \textit{nula} (custo uniforme);
+      \item \textbf{\texttt{L1:}} Para execução de \textit{A*} com heurística não admissível;
+      \item \textbf{\texttt{L2:}} Para execução de \textit{A*} com heurística \textit{Manhattan\cite{sharma2016}};
+      \item \textbf{\texttt{L3:}} Para execução de \textit{A*} com heurística tunada;
+  \end{itemize}
 \end{itemize}
 
-Na função \texttt{a\_star()} então são definidos os conjuntos que armazenam os estados visitados e os estados abertos, bem como o número de estados abertos e o número máximo de estados abertos (fronteira máxima). Nessa mesma função é executado em um laço de repetição o algoritmo até que o estado atual (\texttt{current}) seja o estado alvo (\texttt{t}), nesse momento é retornado as seguintes informações:
+\paragraph{}
+À partir destes dados, serão produzidas as seguintes estruturas de dados, que possibilitarão o processamento do \textit{puzzle}:
 
 \begin{itemize}
-  \item \textbf{open} - Conjunto de estados abertos
-  \item \textbf{open\_upper\_bound} - Número máximo de estados abertos simultâneamente
-  \item \textbf{path} - caminho descoberto pelo algoritmo para chegar ao estado destino
-  \item \textbf{visited} - Conjunto de estados visitados
+\item \textbf{\texttt{g}} - Grafo que serve de estrutura de dados para o algoritmo, contendo apenas o estado inicial
+\item \textbf{\texttt{n}} - Tamanho do tabuleiro
+\item \textbf{\texttt{s}} - Estado inicial
+\item \textbf{\texttt{t}} - Estado alvo
+\item \textbf{\texttt{l}} - Heurística a ser utilizada
 \end{itemize}
 
-Por fim, o tempo de execução é parado e então são printados na tela os resultados e o tempo de execução do algoritmo.
+\paragraph{A*}
+A função de busca (implementada sob \texttt{a\_star(g, n, s, t, h)}) recebe, então, estes dados, e inicia o
+processamento a partir do nó \texttt{s} (estado inicial informado ao programa):
+
+\begin{lstlisting}[language=python]
+def a_star(
+    g: Graph, n: int, s: State, t: State, h: HeuristicFunction, max_nodes: int = 400_000
+) -> Result | None:
+    """
+    'A*' search algorithm
+    ...
+    """"
+\end{lstlisting}
+
+Deste ponto em diante, o algoritmo de busca irá calcular para cada nó (nó da vez) as possibilidades de movimentos
+alcançáveis a partir do da configuração atual do tabuleiro, similarmente a uma busca em largura (\textit{BFS}), porém
+utilizando uma fila priorizada (\textit{Priority Queue}) baseada no \textit{score} de cada movimento, que será referente
+à função \textit{f}:
+
+\begin{displaymath}
+f(n) = g(n) + h(n)
+\end{displaymath}
+
+Onde:
+\begin{itemize}
+  \item $f(n)$ é o \textit{score} geral;
+  \item $g(n)$ é o valor de \textit{custo} ou \textit{função utilidade} atrelada ao nó;
+  \item $g(n)$ é o valor de \textit{heurístico} atrelado ao nó;
+\end{itemize}
+
+\paragraph{}
+O algoritmo navegará o grafo seguindo a ordem da fila priorizada até encontrar o estado de solução (\texttt{t}) ou a
+fila ficar vazia, que sinalizará que o estado de entrada (\texttt{s}) não é solucionável.
+
+\paragraph{Observação}
+Deve ser observado que a implementação de \texttt{a\_star} recebe também um sexto parâmetro ``\texttt{max\_nodes}'', que
+agirá como uma salvaguarda, para evitar que, em casos de \textit{puzzles} maiores (\textit{15Puzzle},
+\textit{24Puzzle}), o programa consuma muita memória do \textit{host}, abortando a busca uma vez que este limite é
+atingido.
 
 \section{Q2}
 
@@ -130,7 +198,7 @@ Para atender os requisitos do trabalho foram feitas três heurísticas e o algor
     \item \textbf{Melhor Heurística admissível (L3)} - Manhattan + Conflitos Lineares
 \end{itemize}
 
-A heurística de Manhattan calcula a distância em que cada peça está posicionada e da sua posição destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e horizontal. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la com o valor dobrado a torna não admissível pois superestima o custo real.
+A heurística de Manhattan calcula a distância em que cada peça está posicionada e da sua posição destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e horizontal \cite{sharma2016}. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la com o valor dobrado a torna não admissível pois superestima o custo real.
 
 A utilização de Manhattan + Conflitos Lineares foi escolhida como a melhor heurística possível pois considera a distância de Manhattan, explicada anteriormente, e também leva em consideração a quantidade de peças na linha ou coluna correta mas em posição errada.
 
@@ -163,7 +231,7 @@ Os objetivos foram alcançados, porém, foi necessária a otimização de como a
 
 \newpage
 \section{Bibliografia}
-\bibliographystyle{apalike}
+\bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}
