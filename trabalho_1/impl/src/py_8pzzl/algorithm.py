@@ -110,7 +110,7 @@ def a_star(
 
         if curr_s == t:
             return result(
-                visited_nodes,
+                len(visited_nodes),
                 len(priority_queue),
                 upper_bound,
                 trace_path(breadcrumb, curr_s),
@@ -139,4 +139,4 @@ def a_star(
                 if len(priority_queue) > upper_bound:
                     upper_bound = len(priority_queue)
 
-    return result(visited_nodes, len(priority_queue), upper_bound, None)
+    return result(len(visited_nodes), len(priority_queue), upper_bound, None)
