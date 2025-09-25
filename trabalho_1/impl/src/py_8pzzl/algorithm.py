@@ -97,11 +97,6 @@ def a_star(
     top_h: int = h(s, t, n)
 
     while priority_queue:
-        if len(visited_nodes) >= max_nodes:
-            raise MemoryError(
-                f"Exploração do grafo ultrapassou limite de {max_nodes} nós. Interrompendo execução..."
-            )
-
         curr_h, curr_g, curr_s = pq_pop(priority_queue)
 
         if curr_s == t:
@@ -110,6 +105,11 @@ def a_star(
                 len(priority_queue),
                 upper_bound,
                 trace_path(breadcrumb, curr_s),
+            )
+
+        if len(visited_nodes) >= max_nodes:
+            raise MemoryError(
+                f"Exploração do grafo ultrapassou limite de {max_nodes} nós. Interrompendo execução..."
             )
 
         if curr_s in visited_nodes:
