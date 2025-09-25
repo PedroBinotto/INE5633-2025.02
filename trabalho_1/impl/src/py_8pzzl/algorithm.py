@@ -16,38 +16,31 @@ from py_8pzzl.utils import result
 
 def compute_moves(s: State, k: int) -> list[State]:
     delta_map: dict[Direction, Callable[[int, int], int]] = {
-        Direction.UP: (lambda z, k: z + (-k)),
+        Direction.UP: (lambda z, k: z - k),
         Direction.DOWN: (lambda z, k: z + k),
         Direction.LEFT: (lambda z, k: z - 1),
         Direction.RIGHT: (lambda z, k: z + 1),
     }
-
     moves: list[State] = []
     z = s.index(0)
     n = int(k**2)
-
-    u = delta_map[Direction.UP](z, k)
-    d = delta_map[Direction.DOWN](z, k)
-    l = delta_map[Direction.LEFT](z, k)
-    r = delta_map[Direction.RIGHT](z, k)
-
+    u, d, l, r = z - k, z + k, z - 1, z + 1
     if z >= k:
-        result = list(s)
-        result[z], result[u] = result[u], result[z]
-        moves.append(tuple(result))
+        r1 = list(s)
+        r1[z], r1[u] = r1[u], r1[z]
+        moves.append(tuple(r1))
     if z < n - k:
-        result = list(s)
-        result[z], result[d] = result[d], result[z]
-        moves.append(tuple(result))
+        r2 = list(s)
+        r2[z], r2[d] = r2[d], r2[z]
+        moves.append(tuple(r2))
     if z % k != 0:
-        result = list(s)
-        result[z], result[l] = result[l], result[z]
-        moves.append(tuple(result))
+        r3 = list(s)
+        r3[z], r3[l] = r3[l], r3[z]
+        moves.append(tuple(r3))
     if z % k != k - 1:
-        result = list(s)
-        result[z], result[r] = result[r], result[z]
-        moves.append(tuple(result))
-
+        r4 = list(s)
+        r4[z], r4[r] = r4[r], r4[z]
+        moves.append(tuple(r4))
     return moves
 
 
@@ -60,51 +53,26 @@ def trace_path(breadcrumb: Breadcrumb, end: State) -> Path:
     return path
 
 
-def a_star(
-    g: Graph, n: int, s: State, t: State, h: HeuristicFunction, max_nodes: int = 400_000
-) -> Result | None:
-    """
-    'A*' search algorithm
-
-    :param g: Targeted graph
-    :type g: Graph
-
-    :param n: Board size
-    :type n: int
-
-    :param s: Initial state
-    :type s: State
-
-    :param t: Targeted state
-    :type t: State
-
-    :param h: Heuristic function
-    :type h: HeuristicFunction
-
-    :param max_nodes: Hard limit safeguard for explored nodes
-    :type max_nodes: int
-
-    :return: Result
-    :rtype: Result | None
-    """
-
+def a_star(g: Graph, n: int, s: State, t: State, h: HeuristicFunction, max_nodes: int = 400_000) -> Result | None:
     visited_nodes: set[State] = set()
     priority_queue: list[tuple[int, int, State]] = [(h(s, t, n), NODE_MIN_SCORE, s)]
     upper_bound = len(priority_queue)
     breadcrumb: Breadcrumb = {}
     gs: dict[State, int] = {s: NODE_MIN_SCORE}
-
     top_h: int = h(s, t, n)
 
     while priority_queue:
-        if len(visited_nodes) >= max_nodes:
-            raise MemoryError(
-                f"Exploração do grafo ultrapassou limite de {max_nodes} nós. Interrompendo execução..."
-            )
-
         curr_h, curr_g, curr_s = pq_pop(priority_queue)
 
         if curr_s == t:
+            return result(
+                len(visited_nodes),
+                len(priority_queue),
+                upper_bound,
+                trace_path(breadcrumb, curr_s),
+            )
+
+        if max_nodes and len(visited_nodes) >= max_nodes:
             return result(
                 len(visited_nodes),
                 len(priority_queue),
@@ -121,12 +89,9 @@ def a_star(
 
         for move in compute_moves(curr_s, n):
             g.add_edge(curr_s, move)
-
             next_g = curr_g + 1
-
             if move in visited_nodes and next_g >= gs.get(move, NODE_MAX_SCORE):
                 continue
-
             if next_g < gs.get(move, NODE_MAX_SCORE):
                 breadcrumb[move] = curr_s
                 gs[move] = next_g
