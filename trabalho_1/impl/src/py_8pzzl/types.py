@@ -58,8 +58,8 @@ class Direction(Enum):
 
 class Result(TypedDict):
     path: Path | None
-    visited: set[State]
-    open: set[State]
+    visited: int
+    open: int
     open_upper_bound: int
 
 

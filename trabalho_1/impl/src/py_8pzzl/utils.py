@@ -116,9 +116,9 @@ def export_results(
     }
 
     if result is not None:
-        nodes_open = len(result["open"])
+        nodes_open = result["open"]
         nodes_open_upper_bound = result["open_upper_bound"]
-        nodes_visited = len(result["visited"])
+        nodes_visited = result["visited"]
         path = result["path"]
         path_size = len(path) if path is not None else NODE_MIN_SCORE
 
@@ -165,8 +165,8 @@ def use_memo(s: State) -> MemoizedState:
 
 
 def result(
-    visited_nodes: set[State],
-    open_nodes: set[State],
+    visited_nodes: int,
+    open_nodes: int,
     open_nodes_upper_bound: int,
     path: Path | None,
 ) -> Result:

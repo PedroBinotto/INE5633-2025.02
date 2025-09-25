@@ -89,9 +89,8 @@ def a_star(
     """
 
     visited_nodes: set[State] = set()
-    open_nodes: set[State] = {s}
-    upper_bound = len(open_nodes)
     priority_queue: list[tuple[int, int, State]] = [(h(s, t, n), NODE_MIN_SCORE, s)]
+    upper_bound = len(priority_queue)
     breadcrumb: Breadcrumb = {}
     gs: dict[State, int] = {s: NODE_MIN_SCORE}
 
@@ -101,15 +100,20 @@ def a_star(
     while priority_queue:
         if len(visited_nodes) >= max_nodes:
             return result(
-                visited_nodes, open_nodes, upper_bound, trace_path(breadcrumb, top_s)
+                len(visited_nodes),
+                len(priority_queue),
+                upper_bound,
+                trace_path(breadcrumb, top_s),
             )
 
         curr_h, curr_g, curr_s = pq_pop(priority_queue)
-        open_nodes.discard(curr_s)
 
         if curr_s == t:
             return result(
-                visited_nodes, open_nodes, upper_bound, trace_path(breadcrumb, curr_s)
+                visited_nodes,
+                len(priority_queue),
+                upper_bound,
+                trace_path(breadcrumb, curr_s),
             )
 
         if curr_s in visited_nodes:
@@ -132,8 +136,7 @@ def a_star(
                 gs[move] = next_g
                 f_neighbor = next_g + h(move, t, n)
                 pq_push(priority_queue, (f_neighbor, next_g, move))
-                open_nodes.add(move)
-                if len(open_nodes) > upper_bound:
-                    upper_bound = len(open_nodes)
+                if len(priority_queue) > upper_bound:
+                    upper_bound = len(priority_queue)
 
-    return result(visited_nodes, open_nodes, upper_bound, None)
+    return result(visited_nodes, len(priority_queue), upper_bound, None)

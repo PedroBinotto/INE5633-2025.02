@@ -154,7 +154,7 @@ Onde:
 \begin{itemize}
   \item $f(n)$ é o \textit{score} geral;
   \item $g(n)$ é o valor de \textit{custo} ou \textit{função utilidade} atrelada ao nó;
-  \item $g(n)$ é o valor de \textit{heurístico} atrelado ao nó;
+  \item $h(n)$ é o valor de \textit{heurístico} atrelado ao nó;
 \end{itemize}
 
 \paragraph{}
@@ -178,7 +178,72 @@ Como foi gerenciada a fronteira, ou seja, quais verificações foram feitas ante
 \subsubsection{Solução --- \textbf{Q2}}
 
 \paragraph{}
-lakdalk
+A fronteira é gerenciada com uma fila priorizada (\textit{Priority Queue}), inicializada com o estado inicial $\left[ \left( h(s, t, n), g(s), s \right) \right]$:
+
+Onde:
+\begin{itemize}
+  \item $s$ é a representação do estado referente ao score, na forma de uma tupla ordenada;
+  \item $t$ é a representação do estado solução, que representa o objetivo da busca;
+  \item $n$ é o tamanho de lado do tabuleiro;
+  \item $g(n)$ é inicializado em 0;
+  \item $h(n)$ é o resultado da função heurística sobre $s, t, n$;
+\end{itemize}
+
+\begin{lstlisting}[language=python]
+visited_nodes: set[State] = set()
+priority_queue: list[tuple[int, int, State]] = [(h(s, t, n), NODE_MIN_SCORE, s)]
+upper_bound = len(priority_queue)
+breadcrumb: Breadcrumb = {}
+gs: dict[State, int] = {s: NODE_MIN_SCORE}
+\end{lstlisting}
+
+\paragraph{}
+Estruturas de controle:
+
+\begin{itemize}
+  \item \textbf{\texttt{visited\_nodes}}: Conjunto que armazena estados já expandidos/visitados;
+  \item \textbf{\texttt{priority\_queue}}: Estrutura que mantém a fronteira (nós abertos), ordenada pelo valor de $f(n)$;
+  \item \textbf{\texttt{upper\_bound}}: Limite superior do tamanho da fronteira (para estatísticas);
+  \item \textbf{\texttt{breadcrumb}}: Grafo mínimo que mantém as relações inversas da árvore principal, utilizado para
+    retraçar o caminho escolhido de forma mais econômica em relação à memória;
+  \item \textbf{\texttt{gs}}: Dicionário que armazena o menor custo de utilidade conhecido referente à cada estado;
+\end{itemize}
+
+\paragraph{}
+Nós que já constam em \texttt{visited\_nodes} são ignorados afim de evitar a formação de ciclos no grafo.
+
+\begin{lstlisting}[language=python]
+while priority_queue:
+...
+    curr_h, curr_g, curr_s = pq_pop(priority_queue)
+
+    if curr_s == t:
+        return ...
+
+    if curr_s in visited_nodes:
+        continue
+    visited_nodes.add(curr_s)
+\end{lstlisting}
+
+\paragraph{}
+Os ``filhos'' de cada nó são então calculados e explorados (via busca em largura) e submetidos às funções de score e
+fila priorizada; as métricas como \texttt{upper\_bound} também são atualizadas:
+
+\begin{lstlisting}[language=Python]
+for move in compute_moves(curr_s, n):
+    g.add_edge(curr_s, move)
+    next_g = curr_g + 1
+    if move in visited_nodes and next_g >= gs.get(move, NODE_MAX_SCORE):
+        continue
+
+    if next_g < gs.get(move, NODE_MAX_SCORE):
+        breadcrumb[move] = curr_s
+        gs[move] = next_g
+        f_neighbor = next_g + h(move, t, n)
+        pq_push(priority_queue, (f_neighbor, next_g, move))
+        if len(priority_queue) > upper_bound:
+            upper_bound = len(priority_queue)
+\end{lstlisting}
 
 \section{Q3}
 
