@@ -258,16 +258,29 @@ Descrição das heurísticas e comparação da faixa de valores e da precisão d
 Para atender os requisitos do trabalho foram feitas três heurísticas e o algoritmo sem heurísticas (custo uniforme – L0). As heurísticas escolhidas foram:
 
 \begin{itemize}
-    \item \textbf{Heurística não admissível (L1)} - Manhattan x 2
-    \item \textbf{Heurística admissível (L2)} - Manhattan
-    \item \textbf{Melhor Heurística admissível (L3)} - Manhattan + Conflitos Lineares
+    \item \textbf{Heurística não admissível (L1)} - \textit{Manhattan} x 2
+    \item \textbf{Heurística admissível (L2)} - \textit{Manhattan}
+    \item \textbf{Melhor Heurística admissível (L3)} - \textit{Manhattan} + Conflitos Lineares
 \end{itemize}
 
-A heurística de Manhattan calcula a distância em que cada peça está posicionada e da sua posição destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e horizontal \cite{sharma2016}. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la com o valor dobrado a torna não admissível pois superestima o custo real.
+A heurística de \textit{Manhattan} calcula a distância em que cada peça está posicionada e da sua posição destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e horizontal \cite{sharma2016}. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la com o valor dobrado a torna não admissível pois superestima o custo real.
 
-A utilização de Manhattan + Conflitos Lineares foi escolhida como a melhor heurística possível pois considera a distância de Manhattan, explicada anteriormente, e também leva em consideração a quantidade de peças na linha ou coluna correta mas em posição errada.
+A utilização de \textit{Manhattan} + Conflitos Lineares foi escolhida como a melhor heurística possível pois considera a distância de \textit{Manhattan}, explicada anteriormente, e também leva em consideração a quantidade de peças na linha ou coluna correta mas em posição errada.
 
-\section{Q4}
+\paragraph{Apontamentos}
+\begin{itemize}
+  \item Custo uniforme sempre retornará $h(n) = 0$. Essa heurística fará a busca baseada apenas em $g(n)$ e explora
+    muito mais estados, se não, todos;
+  \item A heurística de \textit{Manhattan} calcula a distância em que cada peça está posicionada e da sua posição
+    destino (a posição correta) sem considerar as diagonais, portanto considerando deslocamentos apenas na vertical e
+    horizontal. Essa heurística utilizada é considerada admissível pois não superestima o custo real, porém utilizá-la
+    com o valor dobrado a torna não admissível pois superestima o custo real\cite{sharma2016};
+  \item A heurística não admissível irá retornar $h(n) * 2$; Isso superestima o custo real e pode otimizar o tempo de
+    execução da busca, porém, retornando um caminho não perfeito;
+  \item A utilização de \textit{Manhattan} + Conflitos Lineares foi escolhida como a melhor heurística possível pois considera a distância de \textit{Manhattan}, explicada anteriormente, e também leva em consideração a quantidade de peças na linha ou coluna correta mas em posição errada. Essa heurística ainda é admissível.
+\end{itemize}
+
+\section{Q4}\label{sec:q4}
 
 \paragraph{Proposta ---} enunciado na \textit{Questão 4}:
 
@@ -277,8 +290,52 @@ Breve análise do desempenho da implementação com uma tabela comparativa (usan
 
 \subsubsection{Solução --- \textbf{Q4}}
 
-\paragraph{}
-dkadkajaksd
+\begin{table}
+  \caption{8Puzzle}\label{tab:8p}
+  \centering
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c|c|c|c|c|c|c}
+      \hline
+        Nível Heurística & Dificuldade & Instância & Tempo (segundos) & Nós Visitados & Máx. Fronteira & Caminho \\
+      \hline
+        L0 & Fácil & pzzl\_0\_8 & 0.517s & 8163 & 4485 & 17 \\
+        L0 & Médio & pzzl\_3\_8 & 0.036s & 8164 & 4485 & 17 \\
+        L1 & Fácil & pzzl\_0\_8 & 0.001s & 154 & 99 & 17 \\
+        L1 & Médio & pzzl\_3\_8 & 0.0008s & 127 & 81 & 19 \\
+        L2 & Fácil & pzzl\_0\_8 & 0.0009s & 194 & 121 & 17 \\
+        L2 & Médio & pzzl\_3\_8 & 0.001s & 202 & 126 & 17 \\
+        L2 & Difícil & pzzl\_7\_8 & 0.0003s & 47 & 37 & 13 \\
+        L3 & Fácil & pzzl\_0\_8 & 0.001s & 117 & 79 & 17 \\
+        L3 & Médio & pzzl\_3\_8 & 0.002s & 126 & 83 & 17 \\
+        L3 & Difícil & pzzl\_7\_8 & 0.0006s & 31 & 24 & 13 \\
+      \hline
+    \end{tabular}
+    }
+\end{table}
+
+
+\begin{table}
+  \caption{15Puzzle}\label{tab:15p}
+  \centering
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{c|c|c|c|c|c|c}
+      \hline
+        Heurística & Dificuldade & Instância & Tempo (s) & Nós Visitados & Fronteira Max & Tamanho Caminho \\
+      \hline
+        L0 & Fácil & pzzl\_0\_15 & 3.23s & 400000 & 378572 & N/A \\
+        L0 & Médio & pzzl\_3\_15 & 3.21s & 400000 & 378572 & N/A \\
+        L1 & Fácil & pzzl\_0\_15 & 4.69s & 400000 & 357639 & N/A \\
+        L1 & Médio & pzzl\_3\_15 & 4.72s & 400000 & 351535 & N/A \\
+        L2 & Fácil & pzzl\_0\_15 & 4.79s & 400000 & 347360 & N/A \\
+        L2 & Médio & pzzl\_3\_15 & 4.75s & 400000 & 353335 & N/A \\
+        L2 & Difícil & pzzl\_7\_15 & 4.98s & 400000 & 358550 & N/a \\
+        L3 & Fácil & pzzl\_0\_15 & 9.83s & 400000 & 344200 & N/A \\
+        L3 & Médio & pzzl\_3\_15 & 10.37s & 400000 & 360985 & N/A \\
+        L3 & Difícil & pzzl\_7\_15 & 10.52s & 400000 & 361953 & N/A \\
+      \hline
+    \end{tabular}
+    }
+\end{table}
 
 \section{Q5}
 
@@ -292,7 +349,20 @@ Caso algum dos objetivos não tenha sido alcançado explique o que você faria V
 \subsubsection{Solução --- \textbf{Q5}}
 
 \paragraph{}
-Os objetivos foram alcançados, porém, foi necessária a otimização de como as estruturas estavam sendo usadas para armazenar as informações de execução das buscas. Como exemplo, tem-se a estruturação de como armazenar o caminho dos nós percorridos e abertos para casos onde há milhares de nós percorridos, causando memory leak caso a estrutura e método de armazenamento não sejam adequados.
+Para os \textit{puzzles} maiores ($4^2$, $5^2$), não foi possível fazer uma leitura exata das versões mais
+rudimentares/menos eficientes da busca (custo uniforme ou heurística não admissível), como a complexidade de tempo e
+memória era alta demais e o hardware não era capaz de encontrar a solução nestes casos. 
+
+Por este motivo, adicionamos um
+parâmetro de ``\texttt{max\_nodes}'' (\textit{default: 400000 nós}) à função de busca, que determina um número máximo de nós que podem ser explorados
+antes de abortar a operação, afim de evitar situações que resultariam no congelamento do sistema \textit{host}, como
+aconteceu algumas vezes em desenvolvimento.
+
+Assim, observa-se na \nameref{sec:q4} que alguns dados nas tabelas estão ausentes, pois não conseguimos produzir um
+resultado satisfatório --- isto é, uma solução para o \textit{puzzle}.
+
+Não identificamos se isso é indicativo de um problema na implementação das nossas heurísticas ou uma questão de ordem de
+magnitude.
 
 \newpage
 \section{Bibliografia}
