@@ -107,7 +107,7 @@ class Memo(metaclass=Singleton):
     def __init__(self, n: int | None = None):
         if n is None:
             raise ValueError(
-                "Cache may not be instantiated without informing board dimension"
+                "Cache não pode ser inicializada sem informar as dimensões do tabuleiro"
             )
         self.__n = n
         self.__cache: dict[State, dict[int, tuple[int, int]]] = dict()

@@ -94,16 +94,12 @@ def a_star(
     breadcrumb: Breadcrumb = {}
     gs: dict[State, int] = {s: NODE_MIN_SCORE}
 
-    top_s: State = s
     top_h: int = h(s, t, n)
 
     while priority_queue:
         if len(visited_nodes) >= max_nodes:
-            return result(
-                len(visited_nodes),
-                len(priority_queue),
-                upper_bound,
-                trace_path(breadcrumb, top_s),
+            raise MemoryError(
+                f"Exploração do grafo ultrapassou limite de {max_nodes} nós. Interrompendo execução..."
             )
 
         curr_h, curr_g, curr_s = pq_pop(priority_queue)
@@ -121,7 +117,7 @@ def a_star(
         visited_nodes.add(curr_s)
 
         if curr_h < top_h:
-            top_h, top_s = curr_h, curr_s
+            top_h = curr_h
 
         for move in compute_moves(curr_s, n):
             g.add_edge(curr_s, move)

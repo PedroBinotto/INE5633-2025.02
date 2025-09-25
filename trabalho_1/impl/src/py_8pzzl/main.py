@@ -1,3 +1,4 @@
+from sys import exception
 from py_8pzzl.algorithm import a_star
 from py_8pzzl.heuristic import resolve
 from py_8pzzl.types import Graph
@@ -21,10 +22,14 @@ def run() -> None:
     g = Graph(s)
     initialize_memo(n)
 
-    start = get_unix_time()
-    result = a_star(g, n, s, t, h)
-    end = get_unix_time()
+    try:
+        start = get_unix_time()
+        result = a_star(g, n, s, t, h)
+        end = get_unix_time()
 
-    elapsed = end - start
+        elapsed = end - start
+    except MemoryError as e:
+        print(e.add_note("Busca interrompida."))
+        exit(0)
 
     export_results(start, end, elapsed, l, n, result, get_output_file(s, l))
