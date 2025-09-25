@@ -29,7 +29,8 @@ def run() -> None:
 
         elapsed = end - start
     except MemoryError as e:
-        print(e.add_note("Busca interrompida."))
+        e.add_note("Não há solução possível")
+        print(e)
         exit(0)
 
     export_results(start, end, elapsed, l, n, result, get_output_file(s, l))
