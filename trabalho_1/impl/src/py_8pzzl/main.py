@@ -29,7 +29,6 @@ def run() -> None:
 
         elapsed = end - start
     except MemoryError as e:
-        e.add_note("Não há solução possível")
         print(e)
         exit(0)
 
